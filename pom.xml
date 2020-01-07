@@ -1,0 +1,186 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>com.colstu</groupId>
+    <artifactId>cscp</artifactId>
+    <version>1.0-SNAPSHOT</version>
+    <modules>
+        <module>client-common</module>
+        <module>server-common</module>
+        <module>admin</module>
+        <module>auth</module>
+        <module>config</module>
+        <module>eureka</module>
+        <module>gateway</module>
+        <module>tm</module>
+        <module>turbine</module>
+        <module>user/userClient</module>
+        <module>user/userCommon</module>
+        <module>user/userServer</module>
+        <module>document/documentClient</module>
+        <module>document/documentCommon</module>
+        <module>document/documentServer</module>
+        <module>common</module>
+    </modules>
+    <packaging>pom</packaging>
+
+    <parent>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-starter-parent</artifactId>
+        <version>2.1.7.RELEASE</version>
+        <relativePath/> <!-- lookup parent from repository -->
+    </parent>
+
+    <properties>
+        <java.version>1.8</java.version>
+        <spring-cloud.version>Greenwich.SR2</spring-cloud.version>
+        <userCommon-version>1.0-SNAPSHOT</userCommon-version>
+        <documentCommon-version>1.0-SNAPSHOT</documentCommon-version>
+        <userClient-version>1.0-SNAPSHOT</userClient-version>
+        <documentClient-version>1.0-SNAPSHOT</documentClient-version>
+        <server-common-version>1.0-SNAPSHOT</server-common-version>
+        <client-common-version>1.0-SNAPSHOT</client-common-version>
+        <spring-cloud-bus-version>2.1.2.RELEASE</spring-cloud-bus-version>
+        <tx-lcn-version>5.0.2.RELEASE</tx-lcn-version>
+        <zipkin-version>2.12.1</zipkin-version>
+        <zipkin-elasticsearch-version>2.8.4</zipkin-elasticsearch-version>
+        <spring-boot-admin.version>2.1.5</spring-boot-admin.version>
+        <spring-cloud-services.version>2.1.4.RELEASE</spring-cloud-services.version>
+        <fastjson-version>1.2.55</fastjson-version>
+        <spirng-data-redis-version>1.3.2.RELEASE</spirng-data-redis-version>
+        <swagger2-version>2.7.0</swagger2-version>
+        <common-version>1.0-SNAPSHOT</common-version>
+    </properties>
+
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>common</artifactId>
+                <version>${common-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger2</artifactId>
+                <version>${swagger2-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>io.springfox</groupId>
+                <artifactId>springfox-swagger-ui</artifactId>
+                <version>${swagger2-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-dependencies</artifactId>
+                <version>${spring-cloud.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.alibaba</groupId>
+                <artifactId>fastjson</artifactId>
+                <version>${fastjson-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.boot</groupId>
+                <artifactId>spring-boot-starter-redis</artifactId>
+                <version>${spirng-data-redis-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>org.springframework.cloud</groupId>
+                <artifactId>spring-cloud-starter-bus-amqp</artifactId>
+                <version>${spring-cloud-bus-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.codingapi.txlcn</groupId>
+                <artifactId>txlcn-tc</artifactId>
+                <version>${tx-lcn-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.codingapi.txlcn</groupId>
+                <artifactId>txlcn-txmsg-netty</artifactId>
+                <version>${tx-lcn-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.codingapi.txlcn</groupId>
+                <artifactId>txlcn-tm</artifactId>
+                <version>${tx-lcn-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.zipkin.java</groupId>
+                <artifactId>zipkin-autoconfigure-ui</artifactId>
+                <version>${zipkin-version}</version>
+            </dependency>
+            <!-- zipkin 服务类-->
+            <dependency>
+                <groupId>io.zipkin.java</groupId>
+                <artifactId>zipkin-server</artifactId>
+                <version>${zipkin-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.zipkin.java</groupId>
+                <artifactId>zipkin-autoconfigure-storage-elasticsearch-http</artifactId>
+                <version>${zipkin-elasticsearch-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>io.pivotal.spring.cloud</groupId>
+                <artifactId>spring-cloud-services-dependencies</artifactId>
+                <version>${spring-cloud-services.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>de.codecentric</groupId>
+                <artifactId>spring-boot-admin-dependencies</artifactId>
+                <version>${spring-boot-admin.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>server-common</artifactId>
+                <version>${server-common-version}</version>
+            </dependency>
+
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>client-common</artifactId>
+                <version>${client-common-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>userCommon</artifactId>
+                <version>${userCommon-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>documentCommon</artifactId>
+                <version>${documentCommon-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>userClient</artifactId>
+                <version>${userClient-version}</version>
+            </dependency>
+            <dependency>
+                <groupId>com.colstu</groupId>
+                <artifactId>documentClient</artifactId>
+                <version>${documentClient-version}</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+</project>
