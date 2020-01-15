@@ -6,8 +6,7 @@ import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
 import com.cscp.userServer.service.IUserService;
 import dto.UserDto;
-import io.swagger.annotations.Api;
-import io.swagger.annotations.ApiOperation;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,31 +21,31 @@ import java.util.List;
  * @since 2019-10-26
  */
 @RestController
-@RequestMapping("/user")
+@RequestMapping("/users")
 public class UserController {
     @Autowired
     IUserService iUserService;
 
-    @PostMapping("/getGridUsers")
-    public Result getGridUsers(@RequestBody(required = false) GridRequest gridRequest) {
-        return ResultUtil.success(iUserService.getGridUsers(gridRequest));
+    @GetMapping("/")
+    public Result get(@RequestParam(required = false) GridRequest gridRequest) {
+        return ResultUtil.success(iUserService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 
-    @PostMapping("/registry")
-    public Result registry(@RequestBody UserDto userDto) {
-        iUserService.registry(userDto);
+    @PostMapping("/")
+    public Result post(@RequestBody UserDto userDto) {
+        iUserService.post(userDto);
         return ResultUtil.success();
     }
 
-    @PostMapping("/updateUser")
-    public Result updateUser(@RequestBody UserDto userDto) {
-        iUserService.updateUser(userDto);
+    @PutMapping("/")
+    public Result put(@RequestBody UserDto userDto) {
+        iUserService.put(userDto);
         return ResultUtil.success();
     }
 
-    @PostMapping("/deleteUser")
-    public Result deleteUser(@RequestParam List<String> ids) {
-        iUserService.deleteUser(ids);
+    @DeleteMapping("/")
+    public Result delete(@RequestParam List<String> ids) {
+        iUserService.delete(ids);
         return ResultUtil.success();
     }
 }

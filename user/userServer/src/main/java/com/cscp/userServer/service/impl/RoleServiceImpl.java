@@ -72,8 +72,8 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     @Override
     public void deleteRole(List<String> roleIds) {
         UpdateWrapper<Role> roleUpdateWrapper = new UpdateWrapper<>();
-        roleUpdateWrapper.set("status",Constant.TABLE_DELETE_CODE);
-        roleUpdateWrapper.in("id",roleIds);
+        roleUpdateWrapper.set("status", Constant.TABLE_DELETE_CODE);
+        roleUpdateWrapper.in("id", roleIds);
         this.update(roleUpdateWrapper);
     }
 
@@ -103,6 +103,9 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     public List<Role> getRolesByUserId(String userId) {
         List<String> roleIds = iUserRoleService.list(new QueryWrapper<UserRole>().eq("u_id", userId))
                 .stream().map(UserRole::getRId).collect(Collectors.toList());
-        return this.list(new QueryWrapper<Role>().eq("status",Constant.TABLE_NORMAL_CODE).in("id", roleIds));
+        if (CollectionUtils.isEmpty(roleIds)) {
+            return null;
+        }
+        return this.list(new QueryWrapper<Role>().eq("status", Constant.TABLE_NORMAL_CODE).in("id", roleIds));
     }
 }

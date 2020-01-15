@@ -22,12 +22,12 @@ import java.util.List;
 public interface IUserService extends IService<User> {
     UserDto getCurrentUser();
 
-    GridResponseWrapper getGridUsers(GridRequest gridRequest);
+    GridResponseWrapper get(GridRequest gridRequest);
 
-    void registry(UserDto userDto);
+    void post(UserDto userDto);
 
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
-    void updateUser(UserDto userDto);
+    void put(UserDto userDto);
 
-    void deleteUser(List<String> ids);
+    void delete(List<String> ids);
 }

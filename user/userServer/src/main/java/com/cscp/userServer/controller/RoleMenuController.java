@@ -5,11 +5,7 @@ import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.userServer.service.IRoleMenuService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
@@ -27,9 +23,9 @@ public class RoleMenuController {
     @Autowired
     IRoleMenuService iRoleMenuService;
 
-    @PostMapping("/roleMenuBind")
-    public Result roleMenuBind(String roleId, @RequestParam(required = false) List<String> menuIds) {
-        iRoleMenuService.roleMenuBind(roleId,menuIds);
+    @PutMapping("/bind")
+    public Result bind(String roleId, @RequestParam(required = false) List<String> menuIds) {
+        iRoleMenuService.roleMenuBind(roleId, menuIds);
         return ResultUtil.success();
     }
 }

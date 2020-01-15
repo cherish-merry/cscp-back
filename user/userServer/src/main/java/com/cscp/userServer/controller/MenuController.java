@@ -30,7 +30,7 @@ public class MenuController {
     @Autowired
     IMenuService iMenuService;
 
-    @GetMapping("/getCurrentMenus")
+    @GetMapping("/current")
     public Result getCurrentMenus() {
 //        UserDto currentUser = iUserService.getCurrentUser();
 //        if (currentUser == null) {
@@ -39,7 +39,7 @@ public class MenuController {
         return ResultUtil.success(iMenuService.getMenusByUsername("ckz"));
     }
 
-    @GetMapping("/getAllMenus")
+    @GetMapping("/")
     public Result getAllMenus() {
         return ResultUtil.success(iMenuService.getAllMenus());
     }

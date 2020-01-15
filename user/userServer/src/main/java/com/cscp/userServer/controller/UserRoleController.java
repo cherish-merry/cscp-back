@@ -23,9 +23,9 @@ public class UserRoleController {
     @Autowired
     IUserRoleService iUserRoleService;
 
-    @PostMapping("/bindUserRole")
-    public Result bindUserRole(String userId,@RequestParam(required = false) List<String> roleIds){
-        iUserRoleService.bindUserRole(userId,roleIds);
+    @PutMapping("/bind")
+    public Result bindUserRole(String userId, @RequestParam(required = false) List<String> roleIds) {
+        iUserRoleService.bindUserRole(userId, roleIds);
         return ResultUtil.success();
     }
 }

@@ -11,7 +11,7 @@ public class CodeGenerator {
 
     private static String MODULE_NAME = ".documentServer";
 
-    private static String[] TABLES = {"share_document"};
+    private static String[] TABLES = {"web_site"};
 
     public static void main(String[] args) {
         // 代码生成器

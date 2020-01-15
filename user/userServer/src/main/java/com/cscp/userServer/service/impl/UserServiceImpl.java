@@ -16,6 +16,7 @@ import com.cscp.userServer.service.IMajorService;
 import com.cscp.userServer.service.ISchoolService;
 import com.cscp.userServer.service.IUserService;
 import dto.UserDto;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
@@ -90,7 +91,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @date: 2020/1/2
      */
     @Override
-    public GridResponseWrapper getGridUsers(GridRequest gridRequest) {
+    public GridResponseWrapper get(GridRequest gridRequest) {
         GridResponseWrapper gridResponseWrapper = new GridResponseWrapper();
         Map<String, Object> filterParams = gridRequest.getFilterParams();
         if (filterParams == null) {
@@ -138,7 +139,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public void registry(UserDto userDto) {
+    public void post(UserDto userDto) {
         User user = new User();
         QueryWrapper<User> queryWrapper = new QueryWrapper<>();
         queryWrapper.eq("username", userDto.getUsername());
@@ -159,7 +160,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public void updateUser(UserDto userDto) {
+    public void put(UserDto userDto) {
         User user = new User();
         BeanUtils.copyProperties(userDto, user, "password");
         user.setUpdateTime(LocalDateTime.now());
@@ -175,7 +176,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     @Override
-    public void deleteUser(List<String> ids) {
+    public void delete(List<String> ids) {
         UpdateWrapper<User> updateWrapper = new UpdateWrapper<>();
         updateWrapper.set("status", Constant.TABLE_DELETE_CODE);
         updateWrapper.in("id", ids);
