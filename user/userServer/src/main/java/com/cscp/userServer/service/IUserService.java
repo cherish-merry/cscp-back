@@ -20,7 +20,7 @@ import java.util.List;
  * @since 2019-10-26
  */
 public interface IUserService extends IService<User> {
-    UserDto getCurrentUser();
+    UserDto current();
 
     GridResponseWrapper get(GridRequest gridRequest);
 

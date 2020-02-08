@@ -1,16 +1,11 @@
 package com.cscp.documentServer.controller;
 
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
-import com.cscp.common.utils.GridResponse;
-import com.cscp.common.utils.GridService;
 import com.cscp.common.utils.ViewException;
-import com.cscp.documentCommon.vo.DocumentVo;
 import com.cscp.documentServer.client.UserClient;
 import com.cscp.documentServer.dao.entity.ShareDocument;
 import com.cscp.documentServer.dao.entity.ShareDocumentType;
@@ -34,7 +29,6 @@ import java.net.URLEncoder;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 import static com.cscp.documentCommon.Constant.*;
 

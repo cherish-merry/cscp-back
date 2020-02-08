@@ -32,7 +32,7 @@ public class MenuController {
 
     @GetMapping("/current")
     public Result getCurrentMenus() {
-//        UserDto currentUser = iUserService.getCurrentUser();
+//        UserDto currentUser = iUserService.current();
 //        if (currentUser == null) {
 //            throw new ViewException("请先登陆...");
 //        }

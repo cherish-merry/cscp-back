@@ -38,6 +38,6 @@ public class UserApiImpl implements UserApi {
     @Override
     @PostMapping("/getCurrentUser")
     public UserDto getCurrentUser() {
-        return iUserService.getCurrentUser();
+        return iUserService.current();
     }
 }

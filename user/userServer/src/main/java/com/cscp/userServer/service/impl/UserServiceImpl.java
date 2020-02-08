@@ -19,6 +19,8 @@ import dto.UserDto;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -68,21 +70,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @date: 2020/1/2
      */
     @Override
-    public UserDto getCurrentUser() {
-//        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-//        if (authentication == null) {
-//            return null;
-//        }
-//        User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
-//        if (user == null) {
-//            return null;
-//        }
-//        UserDto userDto = new UserDto();
-//        BeanUtils.copyProperties(user, userDto);
-//        return userDto;
-        UserDto user=new UserDto();
-        user.setId("asdfgh");
-        return user;
+    public UserDto current() {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        if (authentication == null) {
+            return null;
+        }
+        User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
+        if (user == null) {
+            return null;
+        }
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        return userDto;
     }
 
     /***

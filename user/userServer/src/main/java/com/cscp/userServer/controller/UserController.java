@@ -26,6 +26,11 @@ public class UserController {
     @Autowired
     IUserService iUserService;
 
+    @GetMapping("/current")
+    public UserDto current() {
+        return iUserService.current();
+    }
+
     @GetMapping("/")
     public Result get(@RequestParam(required = false) GridRequest gridRequest) {
         return ResultUtil.success(iUserService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
