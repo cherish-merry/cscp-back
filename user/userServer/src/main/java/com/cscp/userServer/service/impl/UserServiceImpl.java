@@ -80,7 +80,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 //        UserDto userDto = new UserDto();
 //        BeanUtils.copyProperties(user, userDto);
 //        return userDto;
-        return null;
+        UserDto user=new UserDto();
+        user.setId("asdfgh");
+        return user;
     }
 
     /***

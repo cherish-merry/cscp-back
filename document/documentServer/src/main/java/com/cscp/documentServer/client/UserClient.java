@@ -18,5 +18,10 @@ public interface UserClient extends UserApi {
         public UserDto getUserByUsername(String username) {
             return new UserDto();
     }
+
+        @Override
+        public UserDto getCurrentUser() {
+            return new UserDto();
+        }
     }
 }

@@ -34,4 +34,10 @@ public class UserApiImpl implements UserApi {
         BeanUtils.copyProperties(user, userDto);
         return userDto;
     }
+
+    @Override
+    @PostMapping("/getCurrentUser")
+    public UserDto getCurrentUser() {
+        return iUserService.getCurrentUser();
+    }
 }

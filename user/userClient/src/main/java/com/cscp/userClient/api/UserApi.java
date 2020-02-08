@@ -11,4 +11,7 @@ import org.springframework.web.bind.annotation.*;
 public interface UserApi {
     @PostMapping("/api/getUserByUsername")
     UserDto getUserByUsername(@RequestBody  String username);
+
+    @PostMapping("/api/getCurrentUser")
+    UserDto getCurrentUser();
 }

@@ -24,7 +24,7 @@ import java.util.List;
  * @since 2020-01-05
  */
 @RestController
-@RequestMapping("/upload-file")
+@RequestMapping("/uploadfile")
 public class UploadFileController {
     @Autowired
     IUploadFileService iUploadFileService;

@@ -16,6 +16,7 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
+import java.time.ZoneOffset;
 import java.util.*;
 
 /**
@@ -80,7 +81,7 @@ public class UploadFileServiceImpl extends ServiceImpl<UploadFileMapper, UploadF
         }
         //上传文件到服务器
         String transferToDir = DOCUMENT_DIR_PATH + uploadEntity.getRelativePath();
-        String transferTo = DOCUMENT_DIR_PATH + uploadEntity.getRelativePath() + SEPARATOR + originalFilename + LocalDateTime.now();
+        String transferTo = DOCUMENT_DIR_PATH + uploadEntity.getRelativePath() + SEPARATOR +LocalDateTime.now().toEpochSecond(ZoneOffset.of("+8"))+originalFilename ;
         log.info(String.format("上传文件%s，上传路径%s", originalFilename, transferTo));
         if (!new File(transferToDir).exists()) {
             new File(transferToDir).mkdirs();
