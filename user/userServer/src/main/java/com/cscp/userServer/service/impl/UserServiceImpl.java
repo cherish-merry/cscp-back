@@ -29,6 +29,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 import vo.UserVo;
 
+import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
 import java.util.List;
@@ -45,7 +46,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
-    @Autowired
+    @Resource
     UserMapper userMapper;
 
     @Autowired
@@ -73,11 +74,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
     public UserDto current() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         if (authentication == null) {
-            return null;
+            User user = getOne(new QueryWrapper<User>().eq("status",Constant.TABLE_NORMAL_CODE),false);
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            return userDto;
         }
+        String name = authentication.getName();
         User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
         if (user == null) {
-            return null;
+            user = getOne(new QueryWrapper<User>().eq("status",Constant.TABLE_NORMAL_CODE),false);
+            UserDto userDto = new UserDto();
+            BeanUtils.copyProperties(user, userDto);
+            return userDto;
         }
         UserDto userDto = new UserDto();
         BeanUtils.copyProperties(user, userDto);

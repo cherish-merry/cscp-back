@@ -16,6 +16,7 @@ import com.cscp.documentServer.service.IUploadFileService;
 import com.cscp.documentServer.service.impl.UploadFileServiceImpl;
 import com.cscp.documentServer.support.UploadEntity;
 import dto.UserDto;
+import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -30,6 +31,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.cscp.common.utils.Constant.SEPARATOR;
 import static com.cscp.documentCommon.Constant.*;
 
 /**
@@ -45,9 +47,6 @@ import static com.cscp.documentCommon.Constant.*;
 @Log4j2
 public class ShareDocumentController {
 
-    @Autowired
-    IUploadFileService iUploadFileService;
-
     @Resource
     IShareDocumentService documentService;
 
@@ -62,6 +61,7 @@ public class ShareDocumentController {
 
 
 
+    @ApiOperation("文件上传")
     @PostMapping("/upload")
     public Result upload(MultipartFile file,Long credits,String typeId){
         ShareDocument document=new ShareDocument();
@@ -69,7 +69,7 @@ public class ShareDocumentController {
         UserDto currentUser = userClient.getCurrentUser();
         document.setTId(typeId);
         document.setUId(currentUser.getId());
-        String fId = iUploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", UploadFileServiceImpl.SEPARATOR + "a", file));
+        String fId = uploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
         document.setStatus(DOCUMENT_CHECK_STATUS);
@@ -77,7 +77,7 @@ public class ShareDocumentController {
         return ResultUtil.success("上传成功");
     }
 
-
+    @ApiOperation("通过文件审核")
     @GetMapping("/check/{id}")
     public Result check(HttpServletResponse response, @PathVariable String id) throws IOException {
         UpdateWrapper<ShareDocument> documentUpdateWrapper = new UpdateWrapper<>();
@@ -87,6 +87,7 @@ public class ShareDocumentController {
         return ResultUtil.success("审核通过");
     }
 
+    @ApiOperation("文件下载")
     @GetMapping("/download/{id}")
     @Transactional
     public void download(HttpServletResponse response, @PathVariable String id, @RequestParam int status) throws IOException, ViewException {
@@ -126,6 +127,7 @@ public class ShareDocumentController {
         }
     }
 
+    @ApiOperation("文件删除")
     @GetMapping("/delete/{id}")
     public Result delete( @PathVariable String id) {
         UpdateWrapper<ShareDocument> documentUpdateWrapper = new UpdateWrapper<>();
@@ -135,6 +137,7 @@ public class ShareDocumentController {
         return ResultUtil.success("删除成功");
     }
 
+    @ApiOperation("否决文件审核")
     @GetMapping("/reject/{id}")
     public Result reject(@PathVariable String id) {
         UpdateWrapper<ShareDocument> documentUpdateWrapper = new UpdateWrapper<>();
@@ -144,6 +147,7 @@ public class ShareDocumentController {
         return ResultUtil.success("操作成功");
     }
 
+    @ApiOperation("获取可下载文件列表")
     @GetMapping("/getDownloadFiles")
     public Result getDownloadFiles(GridRequest gridRequest){
         Map map=new HashMap();
@@ -152,6 +156,7 @@ public class ShareDocumentController {
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
 
+    @ApiOperation("获取需审核文件列表")
     @GetMapping("/getCheckedFiles")
     public Result getCheckedFiles(GridRequest gridRequest){
         Map map=new HashMap();
@@ -160,6 +165,7 @@ public class ShareDocumentController {
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
 
+    @ApiOperation("获取文件类型")
     @GetMapping("/getFileTypes")
     public Result getFileTypes(){
         List<ShareDocumentType> list = shareDocumentTypeService.list();

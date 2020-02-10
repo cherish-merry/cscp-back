@@ -3,6 +3,7 @@ package com.cscp.documentServer.controller;
 
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
+import com.cscp.common.utils.Constant;
 import com.cscp.documentServer.service.IUploadFileService;
 import com.cscp.documentServer.service.impl.UploadFileServiceImpl;
 import com.cscp.documentServer.support.UploadEntity;
@@ -31,12 +32,12 @@ public class UploadFileController {
 
     @PostMapping("/uploadSingleFile")
     public Result uploadSingleFile(MultipartFile file) {
-        return ResultUtil.success(iUploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", UploadFileServiceImpl.SEPARATOR+"a", file)));
+        return ResultUtil.success(iUploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", Constant.SEPARATOR+"a", file)));
     }
 
     @PostMapping("/uploadMultiFile")
     public Result uploadMultiFile(List<MultipartFile> files) {
-        return ResultUtil.success(iUploadFileService.uploadFiles(new UploadEntity("jpg,jpeg,png", UploadFileServiceImpl.SEPARATOR+"a", files)));
+        return ResultUtil.success(iUploadFileService.uploadFiles(new UploadEntity("jpg,jpeg,png", Constant.SEPARATOR+"a", files)));
     }
 
 }
