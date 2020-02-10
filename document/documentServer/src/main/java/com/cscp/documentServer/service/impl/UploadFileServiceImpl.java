@@ -12,12 +12,15 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.annotation.Resource;
 import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Array;
 import java.time.LocalDateTime;
 import java.time.ZoneOffset;
 import java.util.*;
+
+import static com.cscp.common.utils.Constant.*;
 
 /**
  * <p>
@@ -30,21 +33,9 @@ import java.util.*;
 @Service
 @Slf4j
 public class UploadFileServiceImpl extends ServiceImpl<UploadFileMapper, UploadFile> implements IUploadFileService {
-    public static final String DOCUMENT_DIR_PATH;
-    public static final String SEPARATOR;
-    public static final String ROOT_FILE_NAME = "upload";
 
-    static {
-        if (System.getProperty("os.name").contains("Windows")) {
-            SEPARATOR = "\\";
-        } else {
-            SEPARATOR = "/";
-        }
-        String projectPath = System.getProperty("user.dir");  //当前项目的路径
-        DOCUMENT_DIR_PATH = projectPath.substring(0, projectPath.lastIndexOf(SEPARATOR)) + SEPARATOR + ROOT_FILE_NAME;
-    }
 
-    @Autowired
+    @Resource
     UploadFileMapper uploadFileMapper;
 
     /***

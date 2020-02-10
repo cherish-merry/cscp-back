@@ -30,6 +30,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static com.cscp.common.utils.Constant.SEPARATOR;
 import static com.cscp.documentCommon.Constant.*;
 
 /**
@@ -44,9 +45,6 @@ import static com.cscp.documentCommon.Constant.*;
 @RequestMapping("/sharedocument")
 @Log4j2
 public class ShareDocumentController {
-
-    @Autowired
-    IUploadFileService iUploadFileService;
 
     @Resource
     IShareDocumentService documentService;
@@ -69,7 +67,7 @@ public class ShareDocumentController {
         UserDto currentUser = userClient.getCurrentUser();
         document.setTId(typeId);
         document.setUId(currentUser.getId());
-        String fId = iUploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", UploadFileServiceImpl.SEPARATOR + "a", file));
+        String fId = uploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
         document.setStatus(DOCUMENT_CHECK_STATUS);
