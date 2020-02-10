@@ -76,15 +76,16 @@ public class HomeworkController {
 
     //    获取学生加入的课程班级
     @ApiOperation("获取学生加入的课程班级")
-    @RequestMapping("/getMyLessonClasses")
-    public Result getMyLessonClasses(com.cscp.common.utils.Page page){
+    @GetMapping("/getMyLessonClasses")
+    public Result getMyLessonClasses(@RequestParam Page page){
         UserDto currentUser = userClient.getCurrentUser();
         return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page),currentUser.getId()));
     }
 
     //    获取管理者管理的课程班级
+    @ApiOperation("获取管理者管理的课程班级")
     @GetMapping("/getManageLessonClasses")
-    public Result getManageClasses(com.cscp.common.utils.Page page){
+    public Result getManageClasses(@RequestParam Page page){
         UserDto currentUser = userClient.getCurrentUser();
         IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", currentUser.getId()));
         GridResponse gridResponse = GridResponse.getResponseByPage(lessonClassIPage);
@@ -102,16 +103,15 @@ public class HomeworkController {
 
     @ApiOperation("根据课程码得到班级课程")
     @GetMapping("/getLessonClassByCode")
-    public Result getLessonClassByCode(Page page,String id){
-        QueryWrapper<LessonClass> queryWrapper=new QueryWrapper<LessonClass>().eq("id", id);
-        IPage iPage = iLessonClassService.page(Page.getIPage(page),queryWrapper);
-        return ResultUtil.success(GridResponse.getResponseByPage(iPage));
+    public Result getLessonClassByCode(@RequestParam String id){
+        LessonClass lessonClass = iLessonClassService.getById(id);
+        return ResultUtil.success(lessonClass);
     }
 
     //    学生加入课程班级
     @ApiOperation("学生加入课程班级")
     @GetMapping("/joinClass")
-    public Result joinClass(String cid){
+    public Result joinClass(@RequestParam String cid){
         UserDto currentUser = userClient.getCurrentUser();
         UserClass userClass=new UserClass();
         userClass.setCId(cid);
@@ -128,16 +128,18 @@ public class HomeworkController {
         BeanUtils.copyProperties(newClassDto,newclass);
         newclass.setId(UUID.randomUUID().toString());
         UserDto currentUser = userClient.getCurrentUser();
-        newclass.setFounderId(currentUser.getId());
-        newclass.setFounderName(currentUser.getName());
+        if(currentUser!=null){
+            newclass.setFounderId(currentUser.getId());
+            newclass.setFounderName(currentUser.getUsername());
+        }
         iLessonClassService.save(newclass);
-        log.info("===>>>"+currentUser.getUsername()+"创建课程："+newclass.getName());
+//        log.info("===>>>"+currentUser.getUsername()+"创建课程："+newclass.getName());
         return ResultUtil.success();
     }
 
     @ApiOperation("获取需要提交该任务的总人数")
     @GetMapping("/getClassMemCount")
-    public Result getClassMemCount(String tId){
+    public Result getClassMemCount(@RequestParam String tId){
         Task task=taskService.getOne(new QueryWrapper<Task>().eq("id", tId));
         String cId=task.getCId();
         int count=userClassService.count(new QueryWrapper<UserClass>().eq("c_id",cId));
@@ -148,7 +150,7 @@ public class HomeworkController {
     //    检测学生是否已经提交该作业
     @ApiOperation("检测当前登录学生是否已经提交该作业")
     @GetMapping("/submited")
-    public Result submited(String tId){
+    public Result submited(@RequestParam String tId){
         UserDto currentUser = userClient.getCurrentUser();
         boolean submited;
         int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId).eq("author",currentUser.getUsername()));
@@ -161,13 +163,13 @@ public class HomeworkController {
 
     @ApiOperation("获取任务已提交人数")
     @GetMapping("/getSubmitedCount")
-    public Result getSubmitedCount(String tId){
+    public Result getSubmitedCount(@RequestParam String tId){
         int count = homeworkService.count(new QueryWrapper<Homework>().eq("id", tId));
         return ResultUtil.success(count);
     }
 
     //    获取该课程的作业任务
-    @ApiOperation("获取该课程的作业任务")
+    @ApiOperation("获取该课程的作业任务,current和size必传")
     @GetMapping("/getTasks")
     public Result getTasks(GridRequest gridRequest,String c_id){
         GridService<Task> gridService=new GridService<>();
@@ -190,7 +192,7 @@ public class HomeworkController {
 
     @ApiOperation("删除任务")
     @GetMapping("/deleteTask")
-    public Result deleteTask(String t_id){
+    public Result deleteTask(@RequestParam String t_id){
         taskService.removeById(t_id);
         return ResultUtil.success();
     }
@@ -198,7 +200,7 @@ public class HomeworkController {
 
     //    上传作业文件
     @Transactional
-    @ApiOperation("删除任务")
+    @ApiOperation("上传作业文件")
     @PostMapping("/upload")
     public Result upload(MultipartFile file, String tId) throws IOException {
         UserDto currentUser = userClient.getCurrentUser();
@@ -231,6 +233,7 @@ public class HomeworkController {
         return ResultUtil.success();
     }
 
+    @ApiOperation("打包下载指定任务的所有提交文件")
     @GetMapping("/hdownload/{t_id}")
     @Transactional
     public void download(HttpServletResponse response, @PathVariable String t_id) throws IOException {
