@@ -7,6 +7,7 @@ import com.cscp.common.utils.ViewException;
 import com.cscp.userServer.service.IMenuService;
 import com.cscp.userServer.service.IUserService;
 import dto.UserDto;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -30,8 +31,9 @@ public class MenuController {
     @Autowired
     IMenuService iMenuService;
 
+    @ApiOperation("获取当前用户的菜单")
     @GetMapping("/current")
-    public Result getCurrentMenus() {
+    public Result current() {
 //        UserDto currentUser = iUserService.current();
 //        if (currentUser == null) {
 //            throw new ViewException("请先登陆...");
@@ -39,8 +41,9 @@ public class MenuController {
         return ResultUtil.success(iMenuService.getMenusByUsername("ckz"));
     }
 
+    @ApiOperation("获取所有菜单")
     @GetMapping("/")
-    public Result getAllMenus() {
+    public Result get() {
         return ResultUtil.success(iMenuService.getAllMenus());
     }
 }
