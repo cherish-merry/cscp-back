@@ -87,15 +87,27 @@ public class ShareDocumentController {
         return ResultUtil.success("审核通过");
     }
 
+
+    @ApiOperation("文件下载前处理(扣除下载积分，需传文件id)")
+    @GetMapping("/preDownload/{id}")
+    @Transactional
+    public Result preDownload( @PathVariable String id){
+        //获取服务器文件
+        ShareDocument document = documentService.getById(id);
+        Long credits = document.getCredits();
+        UserDto master = userClient.getUserById(document.getUId());
+        UserDto customer = userClient.getCurrentUser();
+        customer.setCredits(customer.getCredits()-credits);
+        master.setCredits(master.getCredits()+new Double(credits*0.8).longValue());
+        return ResultUtil.success();
+    }
+
     @ApiOperation("文件下载")
     @GetMapping("/download/{id}")
     @Transactional
     public void download(HttpServletResponse response, @PathVariable String id, @RequestParam int status) throws IOException, ViewException {
         //获取服务器文件
         ShareDocument document = documentService.getById(id);
-        if (status == DOCUMENT_NORMAL_STATUS&&document.getStatus()!=DOCUMENT_NORMAL_STATUS){
-            throw new ViewException("该文件尚未通过审核，不能下载");
-        }
         UploadFile uploadFile=uploadFileService.getById(document.getFId());
         String path = uploadFile.getLocation();
         File file = new File(path);

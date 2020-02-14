@@ -36,6 +36,17 @@ public class UserApiImpl implements UserApi {
     }
 
     @Override
+    public UserDto getUserById(String id) {
+        User user=iUserService.getById(id);
+        if (user == null) {
+            return null;
+        }
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        return userDto;
+    }
+
+    @Override
     @PostMapping("/getCurrentUser")
     public UserDto getCurrentUser() {
         return iUserService.current();

@@ -20,6 +20,11 @@ public interface UserClient extends UserApi {
     }
 
         @Override
+    public UserDto getUserById(String id) {
+        return new UserDto();
+    }
+
+        @Override
         public UserDto getCurrentUser() {
             return new UserDto();
         }

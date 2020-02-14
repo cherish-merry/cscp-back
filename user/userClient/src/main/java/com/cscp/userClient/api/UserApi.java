@@ -12,6 +12,9 @@ public interface UserApi {
     @PostMapping("/api/getUserByUsername")
     UserDto getUserByUsername(@RequestBody  String username);
 
+    @PostMapping("/api/getUserById")
+    public UserDto getUserById(String id);
+
     @PostMapping("/api/getCurrentUser")
     UserDto getCurrentUser();
 }
