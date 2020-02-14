@@ -4,6 +4,7 @@ package com.cscp.userServer.controller;
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.userServer.service.IRoleMenuService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class RoleMenuController {
     @Autowired
     IRoleMenuService iRoleMenuService;
 
+    @ApiOperation("角色-菜单绑定")
     @PutMapping("/bind")
     public Result bind(String roleId, @RequestParam(required = false) List<String> menuIds) {
         iRoleMenuService.roleMenuBind(roleId, menuIds);

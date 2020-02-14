@@ -4,6 +4,7 @@ package com.cscp.userServer.controller;
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.userServer.service.IUserRoleService;
+import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
@@ -23,6 +24,7 @@ public class UserRoleController {
     @Autowired
     IUserRoleService iUserRoleService;
 
+    @ApiOperation("用户角色绑定")
     @PutMapping("/bind")
     public Result bindUserRole(String userId, @RequestParam(required = false) List<String> roleIds) {
         iUserRoleService.bindUserRole(userId, roleIds);

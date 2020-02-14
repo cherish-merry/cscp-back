@@ -7,6 +7,7 @@ import com.cscp.common.utils.GridRequest;
 import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.service.IRoleService;
 import com.sun.org.apache.regexp.internal.RE;
+import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -27,23 +28,27 @@ public class RoleController {
     @Autowired
     IRoleService iRoleService;
 
+    @ApiOperation("获取角色")
     @GetMapping("/")
     public Result get(@RequestBody(required = false) GridRequest gridRequest) {
         return ResultUtil.success(iRoleService.getGridRoles((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 
+    @ApiOperation("添加角色")
     @PostMapping("/")
     public Result post(@RequestBody Role role) {
         iRoleService.addRole(role);
         return ResultUtil.success();
     }
 
+    @ApiOperation("更新")
     @PutMapping("/")
     public Result put(@RequestBody Role role) {
         iRoleService.updateById(role);
         return ResultUtil.success();
     }
 
+    @ApiOperation("删除角色")
     @DeleteMapping("/")
     public Result delete(@RequestParam List<String> roleIds) {
         iRoleService.deleteRole(roleIds);
@@ -51,8 +56,9 @@ public class RoleController {
     }
 
 
-    @GetMapping("/{userId}")
-    public Result getByUserId(@PathVariable("userId") String userId) {
+    @ApiOperation("通过用户id获取角色")
+    @GetMapping("/roles")
+    public Result roles(@RequestParam String userId) {
         return ResultUtil.success(iRoleService.getRolesByUserId(userId));
     }
 }
