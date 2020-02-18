@@ -1,6 +1,5 @@
-package com.cscp.userServer.config;
+package com.cscp.common.security;
 
-import com.cscp.userServer.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Bean;
@@ -9,15 +8,19 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
+import org.springframework.security.config.annotation.web.configurers.ExpressionUrlAuthorizationConfigurer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.EnableResourceServer;
 import org.springframework.security.oauth2.config.annotation.web.configuration.ResourceServerConfigurerAdapter;
 import org.springframework.security.oauth2.provider.token.TokenStore;
 import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenConverter;
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
+import org.springframework.util.CollectionUtils;
 
+import javax.xml.transform.Source;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 /**
@@ -29,7 +32,6 @@ import java.util.stream.Collectors;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)//激活方法上的PreAuthorize注解
 @EnableConfigurationProperties(SecurityProperties.class)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-
     @Autowired
     SecurityProperties securityProperties;
 
@@ -69,10 +71,24 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
     //Http安全配置，对每个到达系统的http请求链接进行校验
     @Override
     public void configure(HttpSecurity http) throws Exception {
-        //所有请求必须认证通过
-        http.authorizeRequests()
+        ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.authorizeRequests()
                 //下边的路径放行
-                .antMatchers(securityProperties.getIgnorePaths().toArray(new String[0])).permitAll()
-                .anyRequest().authenticated();
+                .antMatchers("/users").hasRole("role")
+                .antMatchers(securityProperties.getIgnorePaths().toArray(new String[0])).permitAll();
+        Map<String, String> hasRole = securityProperties.getHasRole();
+        Map<String, String> hasAnyRole = securityProperties.getHasAnyRole();
+        System.out.println(hasAnyRole);
+        System.out.println(hasRole);
+        if (!CollectionUtils.isEmpty(hasRole)) {
+            hasRole.forEach((key, value) -> {
+                registry.antMatchers(key).hasRole(value);
+            });
+        }
+        if (!CollectionUtils.isEmpty(hasAnyRole)) {
+            hasAnyRole.forEach((key, value) -> {
+                registry.antMatchers(key).hasAnyRole(value);
+            });
+        }
+        registry.anyRequest().authenticated();
     }
 }

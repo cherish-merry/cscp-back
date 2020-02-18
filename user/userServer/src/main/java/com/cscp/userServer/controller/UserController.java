@@ -4,12 +4,14 @@ package com.cscp.userServer.controller;
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
+import com.cscp.userServer.service.IRoleService;
 import com.cscp.userServer.service.IUserService;
 import dto.UserDto;
 import io.swagger.annotations.ApiOperation;
 import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
 
 import java.util.List;
 
@@ -26,6 +28,15 @@ import java.util.List;
 public class UserController {
     @Autowired
     IUserService iUserService;
+
+    @Autowired
+    IRoleService iRoleService;
+
+
+    @GetMapping("/me")
+    public Authentication me(Authentication authentication) {
+        return authentication;
+    }
 
     @ApiOperation("获取当前用户")
     @GetMapping("/current")
@@ -58,5 +69,11 @@ public class UserController {
     public Result delete(@RequestParam List<String> ids) {
         iUserService.delete(ids);
         return ResultUtil.success();
+    }
+
+    @ApiOperation("通过用户id获取角色")
+    @GetMapping("/{userId}/roles")
+    public Result roles(@PathVariable("userId") String userId) {
+        return ResultUtil.success(iRoleService.getRolesByUserId(userId));
     }
 }

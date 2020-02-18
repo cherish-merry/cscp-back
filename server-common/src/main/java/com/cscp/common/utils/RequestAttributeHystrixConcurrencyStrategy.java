@@ -1,4 +1,4 @@
-package com.cscp.documentServer.config;
+package com.cscp.common.utils;
 
 import com.netflix.hystrix.HystrixThreadPoolKey;
 import com.netflix.hystrix.HystrixThreadPoolProperties;

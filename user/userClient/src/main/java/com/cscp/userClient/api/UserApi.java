@@ -1,7 +1,10 @@
 package com.cscp.userClient.api;
 
+import dto.RoleDto;
 import dto.UserDto;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 /**
  * @author chen kezhuo
@@ -17,4 +20,7 @@ public interface UserApi {
 
     @PostMapping("/api/getCurrentUser")
     UserDto getCurrentUser();
+
+    @GetMapping("/api/{username}/roles")
+    List<RoleDto> getRolesByUsername(@PathVariable("username") String username);
 }

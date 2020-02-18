@@ -1,9 +1,10 @@
-package com.cscp.userServer.properties;
+package com.cscp.common.security;
 
 import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
 import java.util.List;
+import java.util.Map;
 
 /**
  * @author chen kezhuo
@@ -14,4 +15,6 @@ import java.util.List;
 @ConfigurationProperties(prefix = "colstu.security")
 public class SecurityProperties {
     private List<String> ignorePaths;
+    private Map<String, String> hasRole;
+    private Map<String, String> hasAnyRole;
 }

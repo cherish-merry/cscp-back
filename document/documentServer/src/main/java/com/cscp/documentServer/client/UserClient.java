@@ -1,9 +1,13 @@
 package com.cscp.documentServer.client;
 
 import com.cscp.userClient.api.UserApi;
+import dto.RoleDto;
 import dto.UserDto;
 import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.stereotype.Component;
+
+import java.util.LinkedList;
+import java.util.List;
 
 /**
  * @author chen kezhuo
@@ -27,6 +31,11 @@ public interface UserClient extends UserApi {
         @Override
         public UserDto getCurrentUser() {
             return new UserDto();
+        }
+
+        @Override
+        public List<RoleDto> getRolesByUsername(String username) {
+            return new LinkedList<>();
         }
     }
 }

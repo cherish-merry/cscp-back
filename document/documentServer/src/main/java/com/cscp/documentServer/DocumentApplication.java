@@ -1,5 +1,6 @@
 package com.cscp.documentServer;
 
+import com.cscp.common.security.ResourceServerConfig;
 import org.mybatis.spring.annotation.MapperScan;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -8,6 +9,7 @@ import org.springframework.cloud.client.loadbalancer.LoadBalanced;
 import org.springframework.cloud.netflix.eureka.EnableEurekaClient;
 import org.springframework.cloud.openfeign.EnableFeignClients;
 import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.Import;
 import org.springframework.web.client.RestTemplate;
 import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
@@ -21,16 +23,17 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableFeignClients
 @EnableCircuitBreaker
 @MapperScan("com.cscp.documentServer.dao.mapper")
+@Import(ResourceServerConfig.class)
 //@EnableDistributedTransaction
 @EnableSwagger2
 public class DocumentApplication {
     @LoadBalanced
     @Bean
-    RestTemplate restTemplate(){
+    RestTemplate restTemplate() {
         return new RestTemplate();
     }
 
     public static void main(String[] args) {
-         SpringApplication.run(DocumentApplication.class,args);
+        SpringApplication.run(DocumentApplication.class, args);
     }
 }

@@ -100,12 +100,16 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
      * @date: 2020/1/7
      */
     @Override
-    public List<Role> getRolesByUserId(String userId) {
+    public GridResponse<Role> getRolesByUserId(String userId) {
+        GridResponse<Role> gridResponse = new GridResponse<>();
         List<String> roleIds = iUserRoleService.list(new QueryWrapper<UserRole>().eq("u_id", userId))
                 .stream().map(UserRole::getRId).collect(Collectors.toList());
         if (CollectionUtils.isEmpty(roleIds)) {
             return null;
         }
-        return this.list(new QueryWrapper<Role>().eq("status", Constant.TABLE_NORMAL_CODE).in("id", roleIds));
+        List<Role> result = this.list(new QueryWrapper<Role>().eq("status", Constant.TABLE_NORMAL_CODE).in("id", roleIds));
+        gridResponse.setRecord(result);
+        gridResponse.setTotal(result.size());
+        return gridResponse;
     }
 }

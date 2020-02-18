@@ -23,13 +23,7 @@ public class ResultUtil {
         return result;
     }
 
-    public static Result success(String msg, Object obj) {
-        Result result = new Result();
-        result.setCode(ResultEnum.SUCCESS.getCode());
-        result.setMsg(msg);
-        result.setData(obj);
-        return result;
-    }
+
 
     public static Result error(int code, String msg) {
         Result result = new Result();
@@ -42,7 +36,6 @@ public class ResultUtil {
         Result result = new Result();
         result.setCode(resultEnum.getCode());
         result.setMsg(resultEnum.getMsg());
-        result.setData(null);
         return result;
     }
 }

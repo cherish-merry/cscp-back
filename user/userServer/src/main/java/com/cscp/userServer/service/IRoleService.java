@@ -24,5 +24,5 @@ public interface IRoleService extends IService<Role> {
 
     void addRole(Role role);
 
-    List<Role> getRolesByUserId(String userId);
+    GridResponse<Role> getRolesByUserId(String userId);
 }

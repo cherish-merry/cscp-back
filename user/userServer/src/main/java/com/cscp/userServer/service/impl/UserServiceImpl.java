@@ -2,8 +2,6 @@ package com.cscp.userServer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.core.metadata.IPage;
-import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.Grade;
@@ -16,13 +14,11 @@ import com.cscp.userServer.service.IMajorService;
 import com.cscp.userServer.service.ISchoolService;
 import com.cscp.userServer.service.IUserService;
 import dto.UserDto;
-import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -79,7 +75,6 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             BeanUtils.copyProperties(user, userDto);
             return userDto;
         }
-        String name = authentication.getName();
         User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
         if (user == null) {
             user = getOne(new QueryWrapper<User>().eq("status",Constant.TABLE_NORMAL_CODE),false);

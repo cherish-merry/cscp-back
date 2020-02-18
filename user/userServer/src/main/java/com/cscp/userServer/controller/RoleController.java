@@ -54,11 +54,4 @@ public class RoleController {
         iRoleService.deleteRole(roleIds);
         return ResultUtil.success();
     }
-
-
-    @ApiOperation("通过用户id获取角色")
-    @GetMapping("/roles")
-    public Result roles(@RequestParam String userId) {
-        return ResultUtil.success(iRoleService.getRolesByUserId(userId));
-    }
 }

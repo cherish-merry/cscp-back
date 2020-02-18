@@ -2,8 +2,10 @@ package com.cscp.common.utils;
 
 import com.cscp.common.support.ResultEnum;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Data
+@EqualsAndHashCode(callSuper = false)
 public class ViewException extends RuntimeException {
     private static final long serialVersionUID = 5720848396842316463L;
     private int code;

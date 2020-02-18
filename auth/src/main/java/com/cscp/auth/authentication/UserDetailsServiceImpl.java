@@ -1,7 +1,8 @@
 package com.cscp.auth.authentication;
 
-import com.cscp.auth.service.TokenService;
 import com.cscp.auth.client.UserClient;
+import com.cscp.auth.service.TokenService;
+import dto.RoleDto;
 import dto.UserDto;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -11,9 +12,11 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Component;
+import org.springframework.util.CollectionUtils;
+
+import java.util.List;
 
 /**
  * @author chen kezhuo
@@ -35,9 +38,18 @@ public class UserDetailsServiceImpl implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String s) throws UsernameNotFoundException {
         UserDto userDto = userClient.getUserByUsername(s);
-        if(userDto==null|| StringUtils.isEmpty(userDto.getUsername())){
+        List<RoleDto> roleDtos = userClient.getRolesByUsername(s);
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if (!CollectionUtils.isEmpty(roleDtos)) {
+            roleDtos.forEach(roleDto -> {
+                stringBuilder.append("ROLE_").append(roleDto.getRoleName()).append(",");
+            });
+            stringBuilder.deleteCharAt(stringBuilder.length() - 1);
+        }
+        if (userDto == null || StringUtils.isEmpty(userDto.getUsername())) {
             return null;
         }
-        return new User(userDto.getUsername(), userDto.getPassword(), AuthorityUtils.commaSeparatedStringToAuthorityList("admin,ROLE_USER"));
+        return new User(userDto.getUsername(), userDto.getPassword(), AuthorityUtils.commaSeparatedStringToAuthorityList(stringBuilder.toString()));
     }
 }
