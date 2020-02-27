@@ -2,6 +2,7 @@ package com.cscp.auth.authentication;
 
 import com.cscp.auth.properties.SecurityProperties;
 import com.cscp.auth.support.AuthUtils;
+import com.cscp.common.support.ResultUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang.StringUtils;
@@ -18,6 +19,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.UUID;
 
 /**
  * @author chen kezhuo
@@ -63,7 +65,7 @@ public class OauthAuthenticationSuccessHandler extends SavedRequestAwareAuthenti
             OAuth2AccessToken accessToken = authorizationServerTokenServices.createAccessToken(oAuth2Authentication);
 //            redisTemplate.opsForValue().set(TOKEN_PREFIX+accessToken.getAdditionalInformation().get("jti"),accessToken,clientDetails.getAccessTokenValiditySeconds(), TimeUnit.SECONDS);
             httpServletResponse.setContentType("application/json;charset=UTF-8");
-            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(accessToken));
+            httpServletResponse.getWriter().write(objectMapper.writeValueAsString(ResultUtil.success(accessToken)));
         }
     }
 }

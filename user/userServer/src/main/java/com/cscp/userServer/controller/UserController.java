@@ -40,8 +40,8 @@ public class UserController {
 
     @ApiOperation("获取当前用户")
     @GetMapping("/current")
-    public UserDto current() {
-        return iUserService.current();
+    public Result current() {
+        return ResultUtil.success(iUserService.current());
     }
 
     @ApiOperation("获取用户")

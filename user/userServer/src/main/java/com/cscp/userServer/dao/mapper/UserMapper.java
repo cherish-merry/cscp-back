@@ -1,15 +1,10 @@
 package com.cscp.userServer.dao.mapper;
 
-import com.baomidou.mybatisplus.core.conditions.Wrapper;
+import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.cscp.userServer.dao.entity.User;
-import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Select;
-import vo.UserVo;
-
-import java.util.List;
 
 /**
  * <p>

@@ -4,15 +4,14 @@ import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cscp.common.utils.*;
-import com.cscp.userServer.dao.entity.Grade;
-import com.cscp.userServer.dao.entity.Major;
-import com.cscp.userServer.dao.entity.School;
-import com.cscp.userServer.dao.entity.User;
+import com.cscp.userServer.dao.entity.*;
+import com.cscp.userServer.dao.mapper.RoleMapper;
 import com.cscp.userServer.dao.mapper.UserMapper;
 import com.cscp.userServer.service.IGradeService;
 import com.cscp.userServer.service.IMajorService;
 import com.cscp.userServer.service.ISchoolService;
 import com.cscp.userServer.service.IUserService;
+import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,11 +22,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
-import vo.UserVo;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -44,6 +43,9 @@ import java.util.stream.Collectors;
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     @Resource
     UserMapper userMapper;
+
+    @Resource
+    RoleMapper roleMapper;
 
     @Autowired
     ISchoolService iSchoolService;
@@ -67,24 +69,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      * @date: 2020/1/2
      */
     @Override
-    public UserDto current() {
+    public UserVo current() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication == null) {
-            User user = getOne(new QueryWrapper<User>().eq("status",Constant.TABLE_NORMAL_CODE),false);
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(user, userDto);
-            return userDto;
-        }
         User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
         if (user == null) {
-            user = getOne(new QueryWrapper<User>().eq("status",Constant.TABLE_NORMAL_CODE),false);
-            UserDto userDto = new UserDto();
-            BeanUtils.copyProperties(user, userDto);
-            return userDto;
+            return null;
         }
-        UserDto userDto = new UserDto();
-        BeanUtils.copyProperties(user, userDto);
-        return userDto;
+        LinkedList<User> users = new LinkedList<>();
+        users.add(user);
+        List<UserVo> userVos = usersToUserVos(users);
+        if (CollectionUtils.isEmpty(userVos)) {
+            return null;
+        }
+        return userVos.get(0);
     }
 
     /***
@@ -105,10 +102,19 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         GridService<User> gridService = new GridService<>();
         gridRequest.setFilterParams(filterParams);
         GridResponse<User> gridResponse = gridService.getGridResponse(userMapper, gridRequest);
+        gridResponseWrapper.setTotal(gridResponse.getTotal());
+        gridResponseWrapper.setData(usersToUserVos(gridResponse.getRecord()));
+        return gridResponseWrapper;
+    }
+
+    private List<UserVo> usersToUserVos(List<User> users) {
+        if (CollectionUtils.isEmpty(users)) {
+            return null;
+        }
         List<School> schools = iSchoolService.list();
         List<Grade> grades = iGradeService.list();
         List<Major> majors = iMajorService.list();
-        List<UserVo> userVos = gridResponse.getRecord().stream().map((user) -> {
+        return users.stream().map((user) -> {
             UserVo userVo = new UserVo();
             for (School school : schools) {
                 if (user.getSId().equals(school.getId())) {
@@ -126,13 +132,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     userVo.setMajor(major.getName());
                 }
             }
+            List<Role> roles = roleMapper.getRolesByUsername(user.getUsername());
+            userVo.setRoles(roles.stream().map(Role::getRoleName).collect(Collectors.toList()));
             BeanUtils.copyProperties(user, userVo);
             return userVo;
         }).collect(Collectors.toList());
-        gridResponseWrapper.setTotal(gridResponse.getTotal());
-        gridResponseWrapper.setData(userVos);
-        return gridResponseWrapper;
     }
+
 
     /***
      * @discription 注册用户
