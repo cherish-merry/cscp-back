@@ -77,7 +77,7 @@ public class HomeworkController {
     //    获取学生加入的课程班级
     @ApiOperation("获取学生加入的课程班级")
     @GetMapping("/getMyLessonClasses")
-    public Result getMyLessonClasses(@RequestParam Page page){
+    public Result getMyLessonClasses(Page page){
         UserDto currentUser = userClient.getCurrentUser();
         return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page),currentUser.getId()));
     }
@@ -85,7 +85,7 @@ public class HomeworkController {
     //    获取管理者管理的课程班级
     @ApiOperation("获取管理者管理的课程班级")
     @GetMapping("/getManageLessonClasses")
-    public Result getManageClasses(@RequestParam Page page){
+    public Result getManageClasses(Page page){
         UserDto currentUser = userClient.getCurrentUser();
         IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", currentUser.getId()));
         GridResponse gridResponse = GridResponse.getResponseByPage(lessonClassIPage);

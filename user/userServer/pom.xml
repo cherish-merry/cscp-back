@@ -19,8 +19,6 @@
             <artifactId>userCommon</artifactId>
         </dependency>
 
-
-
         <dependency>
             <groupId>com.colstu</groupId>
             <artifactId>server-common</artifactId>

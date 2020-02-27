@@ -69,7 +69,7 @@ public class ShareDocumentController {
         UserDto currentUser = userClient.getCurrentUser();
         document.setTId(typeId);
         document.setUId(currentUser.getId());
-        String fId = uploadFileService.uploadFile(new UploadEntity("jpg,jpeg,png", SEPARATOR + "share_files", file));
+        String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
         document.setStatus(DOCUMENT_CHECK_STATUS);
