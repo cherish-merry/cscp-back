@@ -113,6 +113,7 @@ public class HomeworkController {
     @GetMapping("/joinClass")
     public Result joinClass(@RequestParam String cid){
         UserDto currentUser = userClient.getCurrentUser();
+
         UserClass userClass=new UserClass();
         userClass.setCId(cid);
         userClass.setUId(currentUser.getId());

@@ -1,16 +1,4 @@
-eureka:
-  client:
-    service-url:
-      defaultZone: http://127.0.0.1:8761/eureka
-  instance:
-    prefer-ip-address: true
-    ip-address: 127.0.0.1
 spring:
-  rabbitmq:
-    host: 47.94.147.215
-    port: 5672
-    username: guest
-    password: guest
   application:
     name: config
   cloud:
@@ -20,6 +8,8 @@ spring:
           uri: https://github.com/bingchuanfeiyu/cscp.git
           username: 2861124797@qq.com
           password: kz13986088105
+  profiles:
+    active: dev
 server:
   port: 8200
 management:
@@ -27,3 +17,23 @@ management:
     web:
       exposure:
         include: "*"
+---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://127.0.0.1:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 127.0.0.1
+spring:
+  profiles: dev
+---
+eureka:
+  client:
+    service-url:
+      defaultZone: http://47.93.40.90:8761/eureka
+  instance:
+    prefer-ip-address: true
+    ip-address: 47.93.40.90
+spring:
+  profiles: prod
