@@ -41,7 +41,7 @@ public class RoleController {
         return ResultUtil.success();
     }
 
-    @ApiOperation("更新")
+    @ApiOperation("更新角色")
     @PutMapping("/")
     public Result put(@RequestBody Role role) {
         iRoleService.updateById(role);

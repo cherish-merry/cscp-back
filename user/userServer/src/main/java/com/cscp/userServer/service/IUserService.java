@@ -1,13 +1,11 @@
 package com.cscp.userServer.service;
 
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cscp.common.utils.GridRequest;
-import com.cscp.common.utils.GridResponse;
 import com.cscp.common.utils.GridResponseWrapper;
 import com.cscp.userServer.dao.entity.User;
-import com.baomidou.mybatisplus.extension.service.IService;
+import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -20,13 +18,12 @@ import java.util.List;
  * @since 2019-10-26
  */
 public interface IUserService extends IService<User> {
-    UserDto current();
+    UserVo current();
 
     GridResponseWrapper get(GridRequest gridRequest);
 
     void post(UserDto userDto);
 
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
     void put(UserDto userDto);
 
     void delete(List<String> ids);

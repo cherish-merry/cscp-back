@@ -1,9 +1,11 @@
-package vo;
+package com.cscp.userServer.vo;
 
+import com.cscp.userServer.dao.entity.Role;
 import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.util.List;
 
 /**
  * @author chen kezhuo
@@ -65,4 +67,9 @@ public class UserVo implements Serializable {
      * 积分
      */
     private Long credits;
+
+    /*
+    * 角色
+    * */
+    private List<String> roles;
 }

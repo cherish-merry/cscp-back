@@ -18,9 +18,6 @@ public interface UserApi {
     @PostMapping("/api/getUserById")
     public UserDto getUserById(String id);
 
-    @PostMapping("/api/getCurrentUser")
-    UserDto getCurrentUser();
-
     @GetMapping("/api/{username}/roles")
     List<RoleDto> getRolesByUsername(@PathVariable("username") String username);
 }

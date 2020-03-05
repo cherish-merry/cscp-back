@@ -55,12 +55,6 @@ public class UserApiImpl implements UserApi {
         return userDto;
     }
 
-    @Override
-    @PostMapping("/getCurrentUser")
-    public UserDto getCurrentUser() {
-        return iUserService.current();
-    }
-
     @GetMapping("/{username}/roles")
     @Override
     public List<RoleDto> getRolesByUsername(@PathVariable("username") String username) {
