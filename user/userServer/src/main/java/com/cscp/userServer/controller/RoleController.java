@@ -30,7 +30,7 @@ public class RoleController {
 
     @ApiOperation("获取角色")
     @GetMapping("/")
-    public Result get(@RequestBody(required = false) GridRequest gridRequest) {
+    public Result get(GridRequest gridRequest) {
         return ResultUtil.success(iRoleService.getGridRoles((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

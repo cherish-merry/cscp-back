@@ -1,8 +1,7 @@
 package com.cscp.userServer.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
-import com.cscp.common.security.ResourceServerConfig;
-import com.cscp.common.security.SecurityProperties;
+import com.cscp.common.security.TokenExtractService;
 import com.cscp.common.utils.GlobalExceptionAdvice;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,5 +21,10 @@ public class BeanConfig {
     @Bean
     public PaginationInterceptor paginationInterceptor() {
         return new PaginationInterceptor();
+    }
+
+    @Bean
+    public TokenExtractService tokenExtractService(){
+        return new TokenExtractService();
     }
 }

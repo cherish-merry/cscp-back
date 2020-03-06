@@ -3,6 +3,7 @@ package com.cscp.auth.config;
 import com.cscp.auth.properties.OAuth2ClientProperties;
 import com.cscp.auth.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.autoconfigure.condition.ConditionalOnBean;
 import org.springframework.cloud.bootstrap.encrypt.KeyProperties;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -22,14 +23,16 @@ import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.security.oauth2.provider.token.store.KeyStoreKeyFactory;
 
 import javax.annotation.Resource;
-import javax.sql.DataSource;
 import java.security.KeyPair;
+import java.util.LinkedList;
 import java.util.List;
 
 
 @Configuration
 @EnableAuthorizationServer
 class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
+    @Autowired
+    AuthenticationManager authenticationManager;
 
     @Autowired
     SecurityProperties securityProperties;
@@ -45,7 +48,8 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
     TokenStore tokenStore;
 
     @Autowired
-    List<TokenEnhancer> tokenEnhancers;
+    TokenEnhancer tokenEnhancer;
+
 
     @Bean
     public KeyProperties keyProperties() {
@@ -89,12 +93,15 @@ class AuthorizationServerConfig extends AuthorizationServerConfigurerAdapter {
 
     @Override
     public void configure(AuthorizationServerEndpointsConfigurer endpoints) throws Exception {
+        List<TokenEnhancer> tokenEnhancers = new LinkedList<>();
         TokenEnhancerChain chain = new TokenEnhancerChain();
+        tokenEnhancers.add(tokenEnhancer);
+        tokenEnhancers.add(jwtAccessTokenConverter);
         chain.setTokenEnhancers(tokenEnhancers);
         endpoints.tokenEnhancer(chain)
                 .accessTokenConverter(jwtAccessTokenConverter)
-                .userDetailsService(userDetailsService)
                 .tokenStore(tokenStore)//令牌存储
+                .authenticationManager(authenticationManager)
                 .userDetailsService(userDetailsService);//用户信息service
     }
 }

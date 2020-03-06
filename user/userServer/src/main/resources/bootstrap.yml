@@ -6,9 +6,9 @@ spring:
       discovery:
         enabled: true
         service-id: config
-      profile: dev
+      profile: prod
   profiles:
-    active: dev
+    active: prod
 ---
 eureka:
   client:

@@ -16,7 +16,6 @@ import org.springframework.security.oauth2.provider.token.store.JwtAccessTokenCo
 import org.springframework.security.oauth2.provider.token.store.JwtTokenStore;
 import org.springframework.util.CollectionUtils;
 
-import javax.xml.transform.Source;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -32,25 +31,7 @@ import java.util.stream.Collectors;
 @EnableGlobalMethodSecurity(prePostEnabled = true, securedEnabled = true)//激活方法上的PreAuthorize注解
 @EnableConfigurationProperties(SecurityProperties.class)
 public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
-    @Autowired
-    SecurityProperties securityProperties;
-
-    //公钥
     private static final String PUBLIC_KEY = "public-key.txt";
-
-    //定义JwtTokenStore，使用jwt令牌
-    @Bean
-    public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
-        return new JwtTokenStore(jwtAccessTokenConverter);
-    }
-
-    //定义JJwtAccessTokenConverter，使用jwt令牌
-    @Bean
-    public JwtAccessTokenConverter jwtAccessTokenConverter() {
-        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
-        converter.setVerifierKey(getPubKey());
-        return converter;
-    }
 
     /**
      * 获取非对称加密公钥 Key
@@ -68,17 +49,37 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
         }
     }
 
+    @Autowired
+    SecurityProperties securityProperties;
+
+    //定义JwtTokenStore，使用jwt令牌
+    @Bean
+    public TokenStore tokenStore(JwtAccessTokenConverter jwtAccessTokenConverter) {
+        return new JwtTokenStore(jwtAccessTokenConverter);
+    }
+
+    @Bean
+    public ExtraInfoAccessTokenConverter extraInfoAccessTokenConverter() {
+        return new ExtraInfoAccessTokenConverter();
+    }
+
+    //定义JJwtAccessTokenConverter，使用jwt令牌
+    @Bean
+    public JwtAccessTokenConverter jwtAccessTokenConverter() {
+        JwtAccessTokenConverter converter = new JwtAccessTokenConverter();
+        converter.setAccessTokenConverter(extraInfoAccessTokenConverter());
+        converter.setVerifierKey(getPubKey());
+        return converter;
+    }
+
+
     //Http安全配置，对每个到达系统的http请求链接进行校验
     @Override
     public void configure(HttpSecurity http) throws Exception {
         ExpressionUrlAuthorizationConfigurer<HttpSecurity>.ExpressionInterceptUrlRegistry registry = http.authorizeRequests()
-                //下边的路径放行
-                .antMatchers("/users").hasRole("role")
                 .antMatchers(securityProperties.getIgnorePaths().toArray(new String[0])).permitAll();
         Map<String, String> hasRole = securityProperties.getHasRole();
         Map<String, String> hasAnyRole = securityProperties.getHasAnyRole();
-        System.out.println(hasAnyRole);
-        System.out.println(hasRole);
         if (!CollectionUtils.isEmpty(hasRole)) {
             hasRole.forEach((key, value) -> {
                 registry.antMatchers(key).hasRole(value);
