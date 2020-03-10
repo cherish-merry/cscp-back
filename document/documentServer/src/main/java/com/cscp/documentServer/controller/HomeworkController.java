@@ -3,7 +3,9 @@ package com.cscp.documentServer.controller;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.cscp.common.security.TokenExtractService;
 import com.cscp.common.support.Result;
+import com.cscp.common.support.ResultEnum;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.*;
 import com.cscp.documentCommon.dto.LessonClassDto;
@@ -26,6 +28,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.annotation.Resource;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.*;
 import java.net.URLEncoder;
@@ -68,6 +71,9 @@ public class HomeworkController {
     @Resource
     private IUserClassService userClassService;
 
+    @Autowired
+    TokenExtractService tokenExtractService;
+
 
     @GetMapping("/getCurrent")
     public Result getCurrent(){
@@ -77,9 +83,9 @@ public class HomeworkController {
     //    获取学生加入的课程班级
     @ApiOperation("获取学生加入的课程班级")
     @GetMapping("/getMyLessonClasses")
-    public Result getMyLessonClasses(Page page){
-        UserDto currentUser = userClient.getCurrentUser();
-        return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page),currentUser.getId()));
+    public Result getMyLessonClasses(HttpServletRequest request,Page page){
+        String UID = tokenExtractService.currentUserId(request);
+        return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page),UID));
     }
 
     //    获取管理者管理的课程班级
@@ -94,8 +100,8 @@ public class HomeworkController {
 
     //    获取所有课程班级
     @ApiOperation("获取所有课程班级")
-    @GetMapping("/getAllClasses")
-    public Result getAllClasses(GridRequest gridRequest){
+    @PostMapping("/getAllClasses")
+    public Result getAllClasses(@RequestBody GridRequest gridRequest){
         GridService<LessonClass> gridService=new GridService<>();
         GridResponse<LessonClass> gridResponse = gridService.getGridResponse(lessonClassMapper, gridRequest);
         return ResultUtil.success(gridResponse);
@@ -113,13 +119,16 @@ public class HomeworkController {
     @GetMapping("/joinClass")
     public Result joinClass(@RequestParam String cid){
         UserDto currentUser = userClient.getCurrentUser();
-
+        QueryWrapper<UserClass> userClassQueryWrapper = new QueryWrapper<UserClass>().eq("c_id", cid).eq("u_id", currentUser.getId());
+        UserClass one = userClassService.getOne(userClassQueryWrapper,false);
+        if (one!=null)
+            return ResultUtil.error(ResultEnum.ERROR.getCode(),"您已加入该课程,请勿重复加入");
         UserClass userClass=new UserClass();
         userClass.setCId(cid);
         userClass.setUId(currentUser.getId());
         userClassService.save(userClass);
         log.info(currentUser.getName()+"加入该课程，课程id："+cid);
-        return ResultUtil.success();
+        return ResultUtil.success(currentUser.getName()+"加入该课程，课程id："+cid);
     }
 
     @ApiOperation("创建新课程班级")
@@ -165,19 +174,20 @@ public class HomeworkController {
     @ApiOperation("获取任务已提交人数")
     @GetMapping("/getSubmitedCount")
     public Result getSubmitedCount(@RequestParam String tId){
-        int count = homeworkService.count(new QueryWrapper<Homework>().eq("id", tId));
+        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId));
         return ResultUtil.success(count);
     }
 
     //    获取该课程的作业任务
     @ApiOperation("获取该课程的作业任务,current和size必传")
-    @GetMapping("/getTasks")
-    public Result getTasks(GridRequest gridRequest,String c_id){
+    @PostMapping("/getTasks")
+    public Result getTasks(@RequestBody GridRequest gridRequest){
         GridService<Task> gridService=new GridService<>();
-        Map<String, Object> filterParams = gridRequest.getFilterParams();
-        if (filterParams==null)
-            filterParams=new HashMap<>();
-        filterParams.put("c_id",c_id);
+//        Map<String, Object> filterParams = gridRequest.getFilterParams();
+//        if (filterParams==null)
+//            filterParams=new HashMap<>();
+//        filterParams.put("c_id",c_id);
+//        gridRequest.setFilterParams(filterParams);
         GridResponse<Task> gridResponse = gridService.getGridResponse(taskMapper, gridRequest);
         return  ResultUtil.success(gridResponse);
     }
@@ -212,7 +222,7 @@ public class HomeworkController {
             homeworkService.removeById(preHomework.getId());
             log.info("用户:" +currentUser.getUsername() + "==覆盖了上传作业文件：" + preHomework.getName());
         }
-        Task task=taskService.getOne(new QueryWrapper<Task>().eq("t_id", tId));
+        Task task=taskService.getOne(new QueryWrapper<Task>().eq("id", tId));
         LessonClass myclass=iLessonClassService.getOne(new QueryWrapper<LessonClass>().eq("id", task.getCId()));
         String fileName=file.getOriginalFilename();
         //判断是否为IE浏览器的文件名，IE浏览器下文件名会带有盘符信息
@@ -239,7 +249,7 @@ public class HomeworkController {
     @Transactional
     public void download(HttpServletResponse response, @PathVariable String t_id) throws IOException {
         Object fileLock = new Object();
-        Task task=taskService.getOne(new QueryWrapper<Task>().eq("t_id", t_id));
+        Task task=taskService.getOne(new QueryWrapper<Task>().eq("id", t_id));
         LessonClass myclass=iLessonClassService.getOne(new QueryWrapper<LessonClass>().eq("id", task.getCId()));
         //获取服务器文件
         List<Homework> homeworkList = homeworkService.list(new QueryWrapper<Homework>().eq("t_id", t_id));

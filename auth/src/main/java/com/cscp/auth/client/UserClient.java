@@ -14,13 +14,15 @@ import java.util.List;
  * @discription
  * @date 2019/8/26 - 16:15
  */
-@FeignClient(name = "user", fallback = UserClient.UserClientFallback.class)
+@FeignClient(name = "user")
 public interface UserClient extends UserApi {
     @Component
     class UserClientFallback implements UserClient {
         @Override
         public UserDto getUserByUsername(String username) {
-            return new UserDto();
+            UserDto userDto = new UserDto();
+//            userDto.setId("sdf");
+            return userDto;
         }
 
         @Override
@@ -32,6 +34,13 @@ public interface UserClient extends UserApi {
         @Override
         public List<RoleDto> getRolesByUsername(String username) {
             return new LinkedList<>();
+        }
+
+        @Override
+        public UserDto getCurrentUser() {
+            UserDto userDto = new UserDto();
+//            userDto.setId("sdf");
+            return userDto;
         }
     }
 }

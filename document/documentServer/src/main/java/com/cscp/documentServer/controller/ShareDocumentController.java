@@ -3,6 +3,7 @@ package com.cscp.documentServer.controller;
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.cscp.common.support.Result;
+import com.cscp.common.support.ResultEnum;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
 import com.cscp.common.utils.ViewException;
@@ -97,7 +98,11 @@ public class ShareDocumentController {
         Long credits = document.getCredits();
         UserDto master = userClient.getUserById(document.getUId());
         UserDto customer = userClient.getCurrentUser();
-        customer.setCredits(customer.getCredits()-credits);
+        if (customer.getCredits()-credits>=0)
+            customer.setCredits(customer.getCredits()-credits);
+        else{
+            return ResultUtil.error(ResultEnum.ERROR.getCode(),"用户余额不足");
+        }
         master.setCredits(master.getCredits()+new Double(credits*0.8).longValue());
         return ResultUtil.success();
     }
@@ -160,8 +165,8 @@ public class ShareDocumentController {
     }
 
     @ApiOperation("获取可下载文件列表")
-    @GetMapping("/getDownloadFiles")
-    public Result getDownloadFiles(GridRequest gridRequest){
+    @PostMapping("/getDownloadFiles")
+    public Result getDownloadFiles(@RequestBody GridRequest gridRequest){
         Map map=new HashMap();
         map.put("status",DOCUMENT_NORMAL_STATUS);
         gridRequest.setFilterParams(map);
@@ -169,8 +174,8 @@ public class ShareDocumentController {
     }
 
     @ApiOperation("获取需审核文件列表")
-    @GetMapping("/getCheckedFiles")
-    public Result getCheckedFiles(GridRequest gridRequest){
+    @PostMapping("/getCheckedFiles")
+    public Result getCheckedFiles(@RequestBody GridRequest gridRequest){
         Map map=new HashMap();
         map.put("status",DOCUMENT_CHECK_STATUS);
         gridRequest.setFilterParams(map);

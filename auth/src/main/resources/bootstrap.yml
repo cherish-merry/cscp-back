@@ -29,3 +29,5 @@ eureka:
     ip-address: 47.93.40.90
 spring:
   profiles: prod
+
+debug: true
