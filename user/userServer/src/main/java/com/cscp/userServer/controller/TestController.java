@@ -1,6 +1,7 @@
 package com.cscp.userServer.controller;
 
 import com.cscp.common.security.TokenExtractService;
+import com.cscp.common.security.UserInfoUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.provider.authentication.OAuth2AuthenticationDetails;
@@ -28,8 +29,6 @@ public class TestController {
 
     @RequestMapping("/getUID2")
     public String getUID2(Authentication authentication) {
-        OAuth2AuthenticationDetails auth2AuthenticationDetails = (OAuth2AuthenticationDetails) authentication.getDetails();
-        Map<String, Object> extraInfo = (Map<String, Object>) auth2AuthenticationDetails.getDecodedDetails();
-        return (String) extraInfo.get("UID");
+        return UserInfoUtil.getUID(authentication);
     }
 }

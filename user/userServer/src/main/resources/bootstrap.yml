@@ -6,7 +6,7 @@ spring:
       discovery:
         enabled: true
         service-id: config
-      profile: prod
+      profile: ${spring.profiles.active}
   profiles:
     active: prod
 ---

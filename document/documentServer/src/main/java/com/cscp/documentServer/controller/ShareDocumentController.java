@@ -2,6 +2,7 @@ package com.cscp.documentServer.controller;
 
 
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.cscp.common.security.UserInfoUtil;
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
@@ -19,6 +20,7 @@ import dto.UserDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -58,6 +60,10 @@ public class ShareDocumentController {
 
     @Resource
     IUploadFileService uploadFileService;
+    
+    
+    @Autowired
+    Authentication authentication;
 
 
 
@@ -66,9 +72,8 @@ public class ShareDocumentController {
     public Result upload(MultipartFile file,Long credits,String typeId){
         ShareDocument document=new ShareDocument();
         document.setCredits(credits);
-        UserDto currentUser = userClient.getCurrentUser();
         document.setTId(typeId);
-        document.setUId(currentUser.getId());
+        document.setUId(UserInfoUtil.getUID(authentication));
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
@@ -96,9 +101,9 @@ public class ShareDocumentController {
         ShareDocument document = documentService.getById(id);
         Long credits = document.getCredits();
         UserDto master = userClient.getUserById(document.getUId());
-        UserDto customer = userClient.getCurrentUser();
-        customer.setCredits(customer.getCredits()-credits);
-        master.setCredits(master.getCredits()+new Double(credits*0.8).longValue());
+//        UserDto customer = userClient.getCurrentUser();
+//        customer.setCredits(customer.getCredits()-credits);
+//        master.setCredits(master.getCredits()+new Double(credits*0.8).longValue());
         return ResultUtil.success();
     }
 

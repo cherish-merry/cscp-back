@@ -6,7 +6,7 @@ spring:
       discovery:
         enabled: true
         service-id: config
-      profile: dev
+      profile: devb
   profiles:
     active: prod
 ---
