@@ -1,7 +1,9 @@
 package com.cscp.userServer.api.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.cscp.common.support.ResultEnum;
 import com.cscp.common.utils.GridRequest;
+import com.cscp.common.utils.ViewException;
 import com.cscp.userClient.api.UserApi;
 import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.dao.entity.User;
@@ -12,9 +14,11 @@ import dto.RoleDto;
 import dto.UserDto;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.CollectionUtils;
 import org.springframework.web.bind.annotation.*;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,7 +33,7 @@ public class UserApiImpl implements UserApi {
     @Autowired
     IUserService iUserService;
 
-    @Autowired
+    @Resource
     RoleMapper roleMapper;
 
     @PostMapping("/getUserByUsername")
@@ -67,5 +71,17 @@ public class UserApiImpl implements UserApi {
             BeanUtils.copyProperties(role, roleDto);
             return roleDto;
         }).collect(Collectors.toList());
+    }
+
+    @Override
+    public UserDto getCurrentUser() {
+        String principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal().toString();
+        User user = iUserService.getOne(new QueryWrapper<User>().eq("username", principal));
+        if (user == null) {
+            throw new ViewException(ResultEnum.ERROR.getCode(),"请先登录");
+        }
+        UserDto userDto = new UserDto();
+        BeanUtils.copyProperties(user, userDto);
+        return userDto;
     }
 }

@@ -20,4 +20,7 @@ public interface UserApi {
 
     @GetMapping("/api/{username}/roles")
     List<RoleDto> getRolesByUsername(@PathVariable("username") String username);
+
+    @GetMapping("/api/getCurrentUser")
+    UserDto getCurrentUser();
 }

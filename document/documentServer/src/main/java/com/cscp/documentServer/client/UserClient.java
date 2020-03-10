@@ -32,5 +32,10 @@ public interface UserClient extends UserApi {
         public List<RoleDto> getRolesByUsername(String username) {
             return new LinkedList<>();
         }
+
+        @Override
+        public UserDto getCurrentUser() {
+            return new UserDto();
+        }
     }
 }

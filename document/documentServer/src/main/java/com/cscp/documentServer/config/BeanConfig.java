@@ -1,6 +1,7 @@
 package com.cscp.documentServer.config;
 
 import com.baomidou.mybatisplus.extension.plugins.PaginationInterceptor;
+import com.cscp.common.security.TokenExtractService;
 import com.cscp.common.utils.FeignClientInterceptor;
 import com.cscp.common.utils.GlobalExceptionAdvice;
 import com.cscp.common.utils.RequestAttributeHystrixConcurrencyStrategy;
@@ -33,5 +34,10 @@ public class BeanConfig {
     @Bean
     public RequestAttributeHystrixConcurrencyStrategy requestAttributeHystrixConcurrencyStrategy() {
         return new RequestAttributeHystrixConcurrencyStrategy();
+    }
+
+    @Bean
+    public TokenExtractService tokenExtractService(){
+        return new TokenExtractService();
     }
 }
