@@ -14,13 +14,10 @@ import com.cscp.documentServer.dao.entity.UploadFile;
 import com.cscp.documentServer.service.IShareDocumentService;
 import com.cscp.documentServer.service.IShareDocumentTypeService;
 import com.cscp.documentServer.service.IUploadFileService;
-import com.cscp.documentServer.service.impl.UploadFileServiceImpl;
 import com.cscp.documentServer.support.UploadEntity;
 import dto.UserDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -56,24 +53,16 @@ public class ShareDocumentController {
     IShareDocumentTypeService shareDocumentTypeService;
 
     @Resource
-    UserClient userClient;
-
-    @Resource
     IUploadFileService uploadFileService;
-    
-    
-    @Autowired
-    Authentication authentication;
-
 
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
-    public Result upload(MultipartFile file,Long credits,String typeId){
-        ShareDocument document=new ShareDocument();
+    public Result upload(MultipartFile file, Long credits, String typeId) {
+        ShareDocument document = new ShareDocument();
         document.setCredits(credits);
         document.setTId(typeId);
-        document.setUId(UserInfoUtil.getUID(authentication));
+        document.setUId(UserInfoUtil.getUID());
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
@@ -96,14 +85,10 @@ public class ShareDocumentController {
     @ApiOperation("文件下载前处理(扣除下载积分，需传文件id)")
     @GetMapping("/preDownload/{id}")
     @Transactional
-    public Result preDownload( @PathVariable String id){
+    public Result preDownload(@PathVariable String id) {
         //获取服务器文件
         ShareDocument document = documentService.getById(id);
         Long credits = document.getCredits();
-        UserDto master = userClient.getUserById(document.getUId());
-//        UserDto customer = userClient.getCurrentUser();
-//        customer.setCredits(customer.getCredits()-credits);
-//        master.setCredits(master.getCredits()+new Double(credits*0.8).longValue());
         return ResultUtil.success();
     }
 
@@ -113,7 +98,7 @@ public class ShareDocumentController {
     public void download(HttpServletResponse response, @PathVariable String id, @RequestParam int status) throws IOException, ViewException {
         //获取服务器文件
         ShareDocument document = documentService.getById(id);
-        UploadFile uploadFile=uploadFileService.getById(document.getFId());
+        UploadFile uploadFile = uploadFileService.getById(document.getFId());
         String path = uploadFile.getLocation();
         File file = new File(path);
         InputStream ins = new FileInputStream(file);
@@ -135,7 +120,7 @@ public class ShareDocumentController {
                 documentUpdateWrapper.eq("id", id);
                 documentUpdateWrapper.set("document_count", document.getDocumentCount() + 1);
                 documentService.update(documentUpdateWrapper);
-            }else if(status==DOCUMENT_CHECK_STATUS){
+            } else if (status == DOCUMENT_CHECK_STATUS) {
             }
         } finally {
             os.flush();
@@ -146,7 +131,7 @@ public class ShareDocumentController {
 
     @ApiOperation("文件删除")
     @GetMapping("/delete/{id}")
-    public Result delete( @PathVariable String id) {
+    public Result delete(@PathVariable String id) {
         UpdateWrapper<ShareDocument> documentUpdateWrapper = new UpdateWrapper<>();
         documentUpdateWrapper.eq("id", id);
         documentUpdateWrapper.set("status", DOCUMENT_DELETE_STATUS);
@@ -166,25 +151,25 @@ public class ShareDocumentController {
 
     @ApiOperation("获取可下载文件列表")
     @GetMapping("/getDownloadFiles")
-    public Result getDownloadFiles(GridRequest gridRequest){
-        Map map=new HashMap();
-        map.put("status",DOCUMENT_NORMAL_STATUS);
+    public Result getDownloadFiles(GridRequest gridRequest) {
+        Map map = new HashMap();
+        map.put("status", DOCUMENT_NORMAL_STATUS);
         gridRequest.setFilterParams(map);
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
 
     @ApiOperation("获取需审核文件列表")
     @GetMapping("/getCheckedFiles")
-    public Result getCheckedFiles(GridRequest gridRequest){
-        Map map=new HashMap();
-        map.put("status",DOCUMENT_CHECK_STATUS);
+    public Result getCheckedFiles(GridRequest gridRequest) {
+        Map map = new HashMap();
+        map.put("status", DOCUMENT_CHECK_STATUS);
         gridRequest.setFilterParams(map);
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
 
     @ApiOperation("获取文件类型")
     @GetMapping("/getFileTypes")
-    public Result getFileTypes(){
+    public Result getFileTypes() {
         List<ShareDocumentType> list = shareDocumentTypeService.list();
         return ResultUtil.success(list);
     }

@@ -63,23 +63,18 @@ public class HomeworkController {
 
     @Resource
     private IUserClassService userClassService;
-
-    @Autowired
-    Authentication authentication;
-
-
     //    获取学生加入的课程班级
     @ApiOperation("获取学生加入的课程班级")
     @GetMapping("/getMyLessonClasses")
-    public Result getMyLessonClasses(Page page, Authentication authentication) {
-        return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page), UserInfoUtil.getUID(authentication)));
+    public Result getMyLessonClasses(Page page) {
+        return ResultUtil.success(iLessonClassService.getLessonClassByUser(Page.getIPage(page), UserInfoUtil.getUID()));
     }
 
     //    获取管理者管理的课程班级
     @ApiOperation("获取管理者管理的课程班级")
     @GetMapping("/getManageLessonClasses")
-    public Result getManageClasses(Page page, Authentication authentication) {
-        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", UserInfoUtil.getUID(authentication)));
+    public Result getManageClasses(Page page) {
+        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", UserInfoUtil.getUID()));
         GridResponse gridResponse = GridResponse.getResponseByPage(lessonClassIPage);
         return ResultUtil.success(gridResponse);
     }
@@ -103,22 +98,22 @@ public class HomeworkController {
     //    学生加入课程班级
     @ApiOperation("学生加入课程班级")
     @GetMapping("/joinClass")
-    public Result joinClass(@RequestParam String cid, Authentication authentication) {
+    public Result joinClass(@RequestParam String cid) {
         UserClass userClass = new UserClass();
         userClass.setCId(cid);
-        userClass.setUId(UserInfoUtil.getUID(authentication));
+        userClass.setUId(UserInfoUtil.getUID());
         userClassService.save(userClass);
         return ResultUtil.success();
     }
 
     @ApiOperation("创建新课程班级")
     @PostMapping("/createClass")
-    public Result createClass(@RequestBody LessonClassDto newClassDto, Authentication authentication) {
+    public Result createClass(@RequestBody LessonClassDto newClassDto) {
         LessonClass newclass = new LessonClass();
         BeanUtils.copyProperties(newClassDto, newclass);
         newclass.setId(UUID.randomUUID().toString());
-        newclass.setFounderId(UserInfoUtil.getUID(authentication));
-        newclass.setFounderName(        UserInfoUtil.getUserName(authentication));
+        newclass.setFounderId(UserInfoUtil.getUID());
+        newclass.setFounderName(        UserInfoUtil.getUserName());
         iLessonClassService.save(newclass);
 //        log.info("===>>>"+        UserInfoUtil.getUserName(authentication)+"创建课程："+newclass.getName());
         return ResultUtil.success();
@@ -139,7 +134,7 @@ public class HomeworkController {
     @GetMapping("/submited")
     public Result submited(@RequestParam String tId) {
         boolean submited;
-        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId).eq("author", UserInfoUtil.getUID(authentication)));
+        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId).eq("author", UserInfoUtil.getUID()));
         if (count != 0)
             submited = true;
         else
@@ -189,12 +184,12 @@ public class HomeworkController {
     @ApiOperation("上传作业文件")
     @PostMapping("/upload")
     public Result upload(MultipartFile file, String tId) throws IOException {
-        Homework preHomework = homeworkService.getOne(new QueryWrapper<Homework>().eq("id", tId).eq("author",         UserInfoUtil.getUserName(authentication)));
+        Homework preHomework = homeworkService.getOne(new QueryWrapper<Homework>().eq("id", tId).eq("author",         UserInfoUtil.getUserName()));
         if (preHomework != null) {
             UploadFile uploadFile = uploadFileService.getById(preHomework.getFId());
             DocumentUtil.deleteFile(uploadFile.getLocation());
             homeworkService.removeById(preHomework.getId());
-            log.info("用户:" +         UserInfoUtil.getUserName(authentication) + "==覆盖了上传作业文件：" + preHomework.getName());
+            log.info("用户:" +         UserInfoUtil.getUserName() + "==覆盖了上传作业文件：" + preHomework.getName());
         }
         Task task = taskService.getOne(new QueryWrapper<Task>().eq("t_id", tId));
         LessonClass myclass = iLessonClassService.getOne(new QueryWrapper<LessonClass>().eq("id", task.getCId()));
@@ -208,13 +203,13 @@ public class HomeworkController {
         }
         Homework homework = new Homework();
         homework.setId(UUID.randomUUID().toString());
-        homework.setAuthor(        UserInfoUtil.getUserName(authentication));
+        homework.setAuthor(        UserInfoUtil.getUserName());
         homework.setTId(tId);
         homework.setName(fileName);
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + HOMEWORK_DIR_NAME + SEPARATOR + myclass.getName() + task.getName(), file));
         homework.setFId(fId);
         homeworkService.save(homework);
-        log.info("用户:" +         UserInfoUtil.getUserName(authentication) + "==>上传作业文件：" + fileName);
+        log.info("用户:" +         UserInfoUtil.getUserName() + "==>上传作业文件：" + fileName);
         return ResultUtil.success();
     }
 
