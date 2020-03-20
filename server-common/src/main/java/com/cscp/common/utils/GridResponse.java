@@ -13,12 +13,12 @@ import java.util.List;
 @Data
 public class GridResponse<T> {
     private long total;
-    private List<T> record;
+    private List<T> records;
 
     public static GridResponse getResponseByPage(IPage iPage){
         GridResponse gridResponse = new GridResponse();
         gridResponse.setTotal(iPage.getTotal());
-        gridResponse.setRecord(iPage.getRecords());
+        gridResponse.setRecords(iPage.getRecords());
         return gridResponse;
     }
 }

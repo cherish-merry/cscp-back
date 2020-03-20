@@ -46,11 +46,6 @@ public class User extends Model<User> implements Serializable {
     private String gId;
 
     /**
-     * 学生类型 0-本科生 1-研究生
-     */
-    private Integer type;
-
-    /**
      * 姓名
      */
     private String name;

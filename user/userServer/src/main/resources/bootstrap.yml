@@ -19,6 +19,9 @@ eureka:
     ip-address: 127.0.0.1
 spring:
   profiles: dev
+logging:
+  level:
+    com.cscp.userServer.dao.mapper: debug
 ---
 eureka:
   client:

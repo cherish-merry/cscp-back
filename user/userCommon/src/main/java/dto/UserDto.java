@@ -11,7 +11,7 @@ import java.time.LocalDate;
  * @date 2019/8/23 - 11:09
  */
 @Data
-public class  UserDto implements Serializable {
+public class UserDto implements Serializable {
     private static final long serialVersionUID = 1L;
 
     private String id;
@@ -30,10 +30,6 @@ public class  UserDto implements Serializable {
      */
     private String gId;
 
-    /**
-     * 学生类型 0-本科生 1-研究生
-     */
-    private Integer type;
 
     /**
      * 姓名

@@ -2,13 +2,10 @@ package com.cscp.userServer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
-import com.baomidou.mybatisplus.extension.service.additional.query.impl.QueryChainWrapper;
 import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.Role;
-import com.cscp.userServer.dao.entity.RoleMenu;
 import com.cscp.userServer.dao.entity.UserRole;
 import com.cscp.userServer.dao.mapper.RoleMapper;
-import com.cscp.userServer.service.IMenuService;
 import com.cscp.userServer.service.IRoleMenuService;
 import com.cscp.userServer.service.IRoleService;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
@@ -108,7 +105,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
             return null;
         }
         List<Role> result = this.list(new QueryWrapper<Role>().eq("status", Constant.TABLE_NORMAL_CODE).in("id", roleIds));
-        gridResponse.setRecord(result);
+        gridResponse.setRecords(result);
         gridResponse.setTotal(result.size());
         return gridResponse;
     }

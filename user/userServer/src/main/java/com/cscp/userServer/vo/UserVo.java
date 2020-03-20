@@ -5,6 +5,7 @@ import lombok.Data;
 
 import java.io.Serializable;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
@@ -20,22 +21,23 @@ public class UserVo implements Serializable {
     /**
      * 学校id
      */
+    private String sId;
+
     private String school;
 
     /**
      * 专业id
      */
+    private String mId;
+
     private String major;
 
     /**
      * 年级id
      */
-    private Integer grade;
+    private String gId;
 
-    /**
-     * 学生类型 0-本科生 1-研究生
-     */
-    private Integer type;
+    private Integer grade;
 
     /**
      * 姓名
@@ -67,6 +69,16 @@ public class UserVo implements Serializable {
      * 积分
      */
     private Long credits;
+
+    /**
+     * 创建时间
+     */
+    private LocalDateTime createTime;
+
+    /**
+     * 更新时间
+     */
+    private LocalDateTime updateTime;
 
     /*
     * 角色

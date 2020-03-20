@@ -13,6 +13,7 @@ import com.cscp.userServer.service.ISchoolService;
 import com.cscp.userServer.service.IUserService;
 import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
+import org.apache.commons.lang.ObjectUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
@@ -103,7 +104,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         gridRequest.setFilterParams(filterParams);
         GridResponse<User> gridResponse = gridService.getGridResponse(userMapper, gridRequest);
         gridResponseWrapper.setTotal(gridResponse.getTotal());
-        gridResponseWrapper.setData(usersToUserVos(gridResponse.getRecord()));
+        gridResponseWrapper.setRecords(usersToUserVos(gridResponse.getRecords()));
         return gridResponseWrapper;
     }
 
@@ -116,20 +117,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<Major> majors = iMajorService.list();
         return users.stream().map((user) -> {
             UserVo userVo = new UserVo();
-            for (School school : schools) {
-                if (user.getSId().equals(school.getId())) {
-                    userVo.setSchool(school.getName());
-                    break;
+            if (user.getSId() != null) {
+                for (School school : schools) {
+                    if (user.getSId().equals(school.getId())) {
+                        userVo.setSchool(school.getName());
+                        break;
+                    }
                 }
             }
-            for (Grade grade : grades) {
-                if (user.getGId().equals(grade.getId())) {
-                    userVo.setGrade(grade.getYear());
+            if(user.getGId()!=null){
+                for (Grade grade : grades) {
+                    if (user.getGId().equals(grade.getId())) {
+                        userVo.setGrade(grade.getName());
+                    }
                 }
             }
-            for (Major major : majors) {
-                if (user.getMId().equals(major.getId())) {
-                    userVo.setMajor(major.getName());
+            if(user.getMId()!=null){
+                for (Major major : majors) {
+                    if (user.getMId().equals(major.getId())) {
+                        userVo.setMajor(major.getName());
+                    }
                 }
             }
             List<Role> roles = roleMapper.getRolesByUsername(user.getUsername());

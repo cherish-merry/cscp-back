@@ -1,6 +1,5 @@
 package com.cscp.documentServer.service.impl;
 
-import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.cscp.common.utils.GridRequest;
 import com.cscp.common.utils.GridResponse;
 import com.cscp.common.utils.GridService;
@@ -16,8 +15,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
-import static com.cscp.documentCommon.Constant.DOCUMENT_CHECK_STATUS;
 
 /**
  * <p>
@@ -42,9 +39,9 @@ public class ShareDocumentServiceImpl extends ServiceImpl<ShareDocumentMapper, S
             filterParams=new HashMap<>();
         }
         GridResponse<ShareDocument> gridResponse = documentGridService.getGridResponse(documentMapper, gridRequest);
-        List<DocumentVo> documentVoList = documentMapper.getDocumentVoList(gridResponse.getRecord().stream().map(e -> e.getId()).collect(Collectors.toList()));
+        List<DocumentVo> documentVoList = documentMapper.getDocumentVoList(gridResponse.getRecords().stream().map(e -> e.getId()).collect(Collectors.toList()));
         GridResponse response=new GridResponse();
-        response.setRecord(documentVoList);
+        response.setRecords(documentVoList);
         response.setTotal(gridResponse.getTotal());
         return response;
     }

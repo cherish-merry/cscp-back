@@ -29,8 +29,8 @@ public class RoleController {
     IRoleService iRoleService;
 
     @ApiOperation("获取角色")
-    @GetMapping("/")
-    public Result get(GridRequest gridRequest) {
+    @PostMapping("/get")
+    public Result get(@RequestBody GridRequest gridRequest) {
         return ResultUtil.success(iRoleService.getGridRoles((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

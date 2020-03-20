@@ -3,10 +3,8 @@ package com.cscp.userServer.controller;
 
 import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
-import com.cscp.common.utils.ViewException;
 import com.cscp.userServer.service.IMenuService;
 import com.cscp.userServer.service.IUserService;
-import dto.UserDto;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;

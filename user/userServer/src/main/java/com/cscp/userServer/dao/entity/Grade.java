@@ -28,7 +28,7 @@ public class Grade implements Serializable {
     /**
      * 年份
      */
-    private Integer year;
+    private Integer name;
 
 
 }

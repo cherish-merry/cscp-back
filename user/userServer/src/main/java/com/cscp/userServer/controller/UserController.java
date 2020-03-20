@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.security.core.Authentication;
 
+import java.io.Console;
 import java.util.List;
 
 /**
@@ -45,8 +46,8 @@ public class UserController {
     }
 
     @ApiOperation("获取用户")
-    @GetMapping("/")
-    public Result get(@RequestParam(required = false) GridRequest gridRequest) {
+    @PostMapping("/get")
+    public Result get(@RequestBody GridRequest gridRequest) {
         return ResultUtil.success(iUserService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

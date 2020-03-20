@@ -9,7 +9,6 @@ import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
-import java.util.List;
 
 /**
  * <p>
@@ -29,7 +28,7 @@ public class LessonClassServiceImpl extends ServiceImpl<LessonClassMapper, Lesso
     public GridResponse getLessonClassByUser(IPage page, String userId) {
         IPage<LessonClass> lessonClasses = lessonClassMapper.getLessonClassByUser(page, userId);
         GridResponse response=new GridResponse<>();
-        response.setRecord(lessonClasses.getRecords());
+        response.setRecords(lessonClasses.getRecords());
         response.setTotal(lessonClasses.getTotal());
         return response;
     }
