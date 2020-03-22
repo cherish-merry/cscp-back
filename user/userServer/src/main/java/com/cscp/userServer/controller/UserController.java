@@ -47,7 +47,7 @@ public class UserController {
 
     @ApiOperation("获取用户")
     @PostMapping("/get")
-    public Result get(@RequestBody GridRequest gridRequest) {
+    public Result get(@RequestBody(required = false) GridRequest gridRequest) {
         return ResultUtil.success(iUserService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

@@ -30,7 +30,7 @@ public class SchoolController {
 
     @ApiOperation("获取学校")
     @PostMapping("/get")
-    public Result get(@RequestBody GridRequest gridRequest) {
+    public Result get(@RequestBody(required = false) GridRequest gridRequest) {
         return ResultUtil.success(iSchoolService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

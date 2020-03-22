@@ -30,7 +30,7 @@ public class MajorController {
 
     @ApiOperation("获取专业")
     @PostMapping("/get")
-    public Result get(@RequestBody GridRequest gridRequest) {
+    public Result get(@RequestBody(required = false) GridRequest gridRequest) {
         return ResultUtil.success(iMajorService.get((GridRequest) ObjectUtils.defaultIfNull(gridRequest, new GridRequest())));
     }
 

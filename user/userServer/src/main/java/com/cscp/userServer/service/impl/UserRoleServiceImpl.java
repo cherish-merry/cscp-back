@@ -1,15 +1,22 @@
 package com.cscp.userServer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cscp.common.utils.GridResponse;
+import com.cscp.common.utils.ViewException;
+import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.dao.entity.UserRole;
+import com.cscp.userServer.dao.mapper.RoleMapper;
 import com.cscp.userServer.dao.mapper.UserRoleMapper;
 import com.cscp.userServer.service.IUserRoleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cscp.userServer.vo.RoleVo;
+import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.BeanUtils;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Propagation;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
 
+import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -23,40 +30,66 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> implements IUserRoleService {
-    /***
-     * @discription 绑定用户角色
-     * @param: [userId, roleIds]
-     * @return: void
-     * @author: ckz
-     * @date: 2020/1/6
-     */
-    @Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
+    @Autowired
+    UserRoleMapper userRoleMapper;
+
+    @Autowired
+    RoleMapper roleMapper;
+
+
+    private List<Role> getRolesByUserId(String userId) {
+        if (StringUtils.isEmpty(userId)) {
+            return null;
+        }
+        List<UserRole> userRoles = userRoleMapper.selectList(new QueryWrapper<UserRole>().eq("u_id", userId)
+        );
+        if(CollectionUtils.isEmpty(userRoles)){
+            return null;
+        }
+        List<String> rIds = userRoles.stream().map(UserRole::getRId).collect(Collectors.toList());
+        return roleMapper.selectList(new QueryWrapper<Role>().in("id",rIds));
+    }
+
+
     @Override
-    public void bindUserRole(String userId, List<String> roleIds) {
-        QueryWrapper<UserRole> queryWrapper = new QueryWrapper<>();
-        queryWrapper.eq("u_id", userId);
-        List<UserRole> ownerRoles = list(queryWrapper);
-        List<String> ownerRolesIds = ownerRoles.stream().map(UserRole::getRId).collect(Collectors.toList());
-        List<String> toDelete;
-        if (!CollectionUtils.isEmpty(roleIds)) {
-            List<UserRole> toInsert = roleIds.stream().filter(s -> !ownerRolesIds.contains(s)).map((s) -> {
-                UserRole userRole = new UserRole();
-                userRole.setUId(userId);
-                userRole.setRId(s);
-                return userRole;
-            }).collect(Collectors.toList());
-            if (!CollectionUtils.isEmpty(toInsert)) {
-                saveBatch(toInsert);
+    public List<RoleVo> get(String userId) {
+        if(StringUtils.isEmpty(userId)){
+            throw new ViewException("user is null");
+        }
+        LinkedList<RoleVo> roleVos = new LinkedList<>();
+        List<Role> roles = getRolesByUserId(userId);
+        if(CollectionUtils.isEmpty(roles)){
+            return null;
+        }
+        for (Role role : roles) {
+            RoleVo roleVo = new RoleVo();
+            BeanUtils.copyProperties(role,roleVo);
+            roleVos.add(roleVo);
+        }
+        return roleVos;
+    }
+
+    @Override
+    public void delete(String userId, String roleId) {
+        if(StringUtils.isEmpty(userId)|StringUtils.isEmpty(roleId)){
+            throw new ViewException("user or role is null");
+        }
+        userRoleMapper.delete(new QueryWrapper<UserRole>().eq("u_id",userId).eq("r_id",roleId));
+    }
+
+    @Override
+    public void post(String userId, String roleId) {
+        if(StringUtils.isEmpty(userId)|StringUtils.isEmpty(roleId)){
+            throw new ViewException("user or role is null");
+        }
+        List<Role> roles = getRolesByUserId(userId);
+        if(!CollectionUtils.isEmpty(roles)){
+            List<String> roleIds = roles.stream().map(Role::getId).collect(Collectors.toList());
+            if(roleIds.contains(roleId)){
+                throw new ViewException("user have the role already");
             }
-            toDelete = ownerRolesIds.stream().filter(s -> !roleIds.contains(s)).collect(Collectors.toList());
-        } else {
-            toDelete = ownerRolesIds;
         }
-        if (!CollectionUtils.isEmpty(toDelete)) {
-            QueryWrapper<UserRole> queryWrapper1 = new QueryWrapper<>();
-            queryWrapper1.eq("u_id", userId);
-            queryWrapper.in("r_id", toDelete);
-            remove(queryWrapper1);
-        }
+        UserRole userRole = new UserRole().setRId(roleId).setUId(userId);
+        save(userRole);
     }
 }

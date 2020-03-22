@@ -24,10 +24,24 @@ public class UserRoleController {
     @Autowired
     IUserRoleService iUserRoleService;
 
-    @ApiOperation("用户角色绑定")
-    @PutMapping("/bind")
-    public Result bindUserRole(String userId, @RequestParam(required = false) List<String> roleIds) {
-        iUserRoleService.bindUserRole(userId, roleIds);
+    @ApiOperation("获取用户角色")
+    @GetMapping("/{userId}")
+    public Result get(@PathVariable String userId){
+        return ResultUtil.success(iUserRoleService.get(userId));
+    }
+
+
+    @ApiOperation("删除用户角色")
+    @DeleteMapping("/")
+    public Result delete(@RequestParam String userId,@RequestParam String roleId){
+        iUserRoleService.delete(userId,roleId);
+        return ResultUtil.success();
+    }
+
+    @ApiOperation("添加用户角色")
+    @PostMapping("/")
+    public Result post(@RequestParam String userId,@RequestParam String roleId){
+        iUserRoleService.post(userId,roleId);
         return ResultUtil.success();
     }
 }
