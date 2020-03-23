@@ -2,14 +2,12 @@ package com.cscp.userServer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
-import com.cscp.common.utils.GridResponse;
 import com.cscp.common.utils.ViewException;
 import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.dao.entity.UserRole;
 import com.cscp.userServer.dao.mapper.RoleMapper;
 import com.cscp.userServer.dao.mapper.UserRoleMapper;
 import com.cscp.userServer.service.IUserRoleService;
-import com.cscp.userServer.vo.RoleVo;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -52,17 +50,17 @@ public class UserRoleServiceImpl extends ServiceImpl<UserRoleMapper, UserRole> i
 
 
     @Override
-    public List<RoleVo> get(String userId) {
+    public List<Role> get(String userId) {
         if(StringUtils.isEmpty(userId)){
             throw new ViewException("user is null");
         }
-        LinkedList<RoleVo> roleVos = new LinkedList<>();
+        LinkedList<Role> roleVos = new LinkedList<>();
         List<Role> roles = getRolesByUserId(userId);
         if(CollectionUtils.isEmpty(roles)){
             return null;
         }
         for (Role role : roles) {
-            RoleVo roleVo = new RoleVo();
+            Role roleVo = new Role();
             BeanUtils.copyProperties(role,roleVo);
             roleVos.add(roleVo);
         }

@@ -2,13 +2,12 @@ package com.cscp.userServer.service.impl;
 
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
+import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.dao.entity.UserRole;
 import com.cscp.userServer.dao.mapper.RoleMapper;
-import com.cscp.userServer.service.IRoleMenuService;
 import com.cscp.userServer.service.IRoleService;
-import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.cscp.userServer.service.IUserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -38,8 +37,6 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
     IUserRoleService iUserRoleService;
 
 
-    @Autowired
-    IRoleMenuService iRoleMenuService;
 
     /***
      * @discription grid 获取角色
@@ -54,6 +51,7 @@ public class RoleServiceImpl extends ServiceImpl<RoleMapper, Role> implements IR
         if (filterParams == null) {
             filterParams = new HashMap<>();
         }
+        gridRequest.setFilterParams(filterParams);
         filterParams.put("status", Constant.TABLE_NORMAL_CODE);
         return new GridService<Role>().getGridResponse(roleMapper, gridRequest);
     }

@@ -1,10 +1,8 @@
 package com.cscp.userServer.service;
 
-import com.cscp.common.utils.GridResponse;
+import com.baomidou.mybatisplus.extension.service.IService;
 import com.cscp.userServer.dao.entity.Role;
 import com.cscp.userServer.dao.entity.UserRole;
-import com.baomidou.mybatisplus.extension.service.IService;
-import com.cscp.userServer.vo.RoleVo;
 
 import java.util.List;
 
@@ -18,7 +16,7 @@ import java.util.List;
  */
 public interface IUserRoleService extends IService<UserRole> {
 
-    List<RoleVo> get(String userId);
+    List<Role> get(String userId);
 
     void delete(String userId, String roleId);
 
