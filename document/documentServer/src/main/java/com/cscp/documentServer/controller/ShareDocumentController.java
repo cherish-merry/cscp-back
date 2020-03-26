@@ -148,7 +148,7 @@ public class ShareDocumentController {
     }
 
     @ApiOperation("获取可下载文件列表")
-    @GetMapping("/getDownloadFiles")
+    @PostMapping("/getDownloadFiles")
     public Result getDownloadFiles(GridRequest gridRequest) {
         Map map = new HashMap();
         map.put("status", DOCUMENT_NORMAL_STATUS);
@@ -157,7 +157,7 @@ public class ShareDocumentController {
     }
 
     @ApiOperation("获取需审核文件列表")
-    @GetMapping("/getCheckedFiles")
+    @PostMapping("/getCheckedFiles")
     public Result getCheckedFiles(GridRequest gridRequest) {
         Map map = new HashMap();
         map.put("status", DOCUMENT_CHECK_STATUS);

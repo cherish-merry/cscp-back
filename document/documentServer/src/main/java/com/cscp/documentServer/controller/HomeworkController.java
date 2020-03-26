@@ -81,8 +81,8 @@ public class HomeworkController {
 
     //    获取所有课程班级
     @ApiOperation("获取所有课程班级")
-    @GetMapping("/getAllClasses")
-    public Result getAllClasses(GridRequest gridRequest) {
+    @PostMapping("/getAllClasses")
+    public Result getAllClasses(@RequestBody GridRequest gridRequest) {
         GridService<LessonClass> gridService = new GridService<>();
         GridResponse<LessonClass> gridResponse = gridService.getGridResponse(lessonClassMapper, gridRequest);
         return ResultUtil.success(gridResponse);
@@ -151,13 +151,9 @@ public class HomeworkController {
 
     //    获取该课程的作业任务
     @ApiOperation("获取该课程的作业任务,current和size必传")
-    @GetMapping("/getTasks")
-    public Result getTasks(GridRequest gridRequest, String c_id) {
+    @PostMapping("/getTasks")
+    public Result getTasks(@RequestBody GridRequest gridRequest) {
         GridService<Task> gridService = new GridService<>();
-        Map<String, Object> filterParams = gridRequest.getFilterParams();
-        if (filterParams == null)
-            filterParams = new HashMap<>();
-        filterParams.put("c_id", c_id);
         GridResponse<Task> gridResponse = gridService.getGridResponse(taskMapper, gridRequest);
         return ResultUtil.success(gridResponse);
     }
