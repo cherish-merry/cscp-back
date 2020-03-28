@@ -39,6 +39,15 @@ public class UserVo implements Serializable {
 
     private Integer grade;
 
+
+    /**
+     * 用户类型id
+     */
+    private String tId;
+
+    private String type;
+
+
     /**
      * 姓名
      */

@@ -7,11 +7,11 @@ import com.baomidou.mybatisplus.generator.config.rules.NamingStrategy;
 import com.baomidou.mybatisplus.generator.engine.FreemarkerTemplateEngine;
 
 public class CodeGenerator {
-    private static String EXTRA_PATH = "/document/documentServer";
+    private static String EXTRA_PATH = "/user/userServer";
 
-    private static String MODULE_NAME = ".documentServer";
+    private static String MODULE_NAME = ".userServer";
 
-    private static String[] TABLES = {"user_class"};
+    private static String[] TABLES = {"user_type"};
 
     public static void main(String[] args) {
         // 代码生成器

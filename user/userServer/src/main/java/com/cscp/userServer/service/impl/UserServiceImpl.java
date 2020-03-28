@@ -7,10 +7,7 @@ import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.*;
 import com.cscp.userServer.dao.mapper.RoleMapper;
 import com.cscp.userServer.dao.mapper.UserMapper;
-import com.cscp.userServer.service.IGradeService;
-import com.cscp.userServer.service.IMajorService;
-import com.cscp.userServer.service.ISchoolService;
-import com.cscp.userServer.service.IUserService;
+import com.cscp.userServer.service.*;
 import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
 import org.apache.commons.lang.ObjectUtils;
@@ -56,6 +53,9 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
     @Autowired
     IMajorService iMajorService;
+
+    @Autowired
+    IUserTypeService iUserTypeService;
 
 //    @Autowired
 //    PasswordEncoder passwordEncoder;
@@ -115,6 +115,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         List<School> schools = iSchoolService.list();
         List<Grade> grades = iGradeService.list();
         List<Major> majors = iMajorService.list();
+        List<UserType> userTypes = iUserTypeService.list();
         return users.stream().map((user) -> {
             UserVo userVo = new UserVo();
             if (user.getSId() != null) {
@@ -136,6 +137,13 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                 for (Major major : majors) {
                     if (user.getMId().equals(major.getId())) {
                         userVo.setMajor(major.getName());
+                    }
+                }
+            }
+            if(user.getTId()!=null){
+                for (UserType userType : userTypes) {
+                    if (user.getTId().equals(userType.getId())) {
+                        userVo.setType(userType.getName());
                     }
                 }
             }
