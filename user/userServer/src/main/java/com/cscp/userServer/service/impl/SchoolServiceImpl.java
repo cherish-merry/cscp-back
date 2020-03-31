@@ -39,7 +39,7 @@ public class SchoolServiceImpl extends ServiceImpl<SchoolMapper, School> impleme
         if(StringUtils.isEmpty(school.getName())){
             throw  new ViewException("school name should not be null");
         }
-        if(CollectionUtils.isEmpty(schoolMapper.selectList(new QueryWrapper<School>().eq("name",school.getName())))){
+        if(!CollectionUtils.isEmpty(schoolMapper.selectList(new QueryWrapper<School>().eq("name",school.getName())))){
             throw new ViewException("this school already exist");
         }
         save(school);

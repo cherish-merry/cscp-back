@@ -41,7 +41,7 @@ public class UserTypeServiceImpl extends ServiceImpl<UserTypeMapper, UserType> i
         if(StringUtils.isEmpty(userType.getName())){
             throw  new ViewException("userType name should not be null");
         }
-        if(CollectionUtils.isEmpty(userTypeMapper.selectList(new QueryWrapper<UserType>().eq("name",userType.getName())))){
+        if(!CollectionUtils.isEmpty(userTypeMapper.selectList(new QueryWrapper<UserType>().eq("name",userType.getName())))){
             throw new ViewException("this userType already exist");
         }
     }

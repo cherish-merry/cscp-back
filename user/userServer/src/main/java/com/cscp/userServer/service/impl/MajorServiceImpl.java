@@ -40,7 +40,7 @@ public class MajorServiceImpl extends ServiceImpl<MajorMapper, Major> implements
         if(StringUtils.isEmpty(major.getName())){
             throw  new ViewException("major name should not be null");
         }
-        if(CollectionUtils.isEmpty(majorMapper.selectList(new QueryWrapper<Major>().eq("name",major.getName())))){
+        if(!CollectionUtils.isEmpty(majorMapper.selectList(new QueryWrapper<Major>().eq("name",major.getName())))){
             throw new ViewException("this major already exist");
         }
         save(major);

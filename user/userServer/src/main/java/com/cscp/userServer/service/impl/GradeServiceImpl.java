@@ -40,7 +40,7 @@ public class GradeServiceImpl extends ServiceImpl<GradeMapper, Grade> implements
         if(grade.getName()==null){
             throw  new ViewException("grade name should not be null");
         }
-        if(CollectionUtils.isEmpty(gradeMapper.selectList(new QueryWrapper<Grade>().eq("name",grade.getName())))){
+        if(!CollectionUtils.isEmpty(gradeMapper.selectList(new QueryWrapper<Grade>().eq("name",grade.getName())))){
             throw new ViewException("this grade already exist");
         }
         save(grade);
