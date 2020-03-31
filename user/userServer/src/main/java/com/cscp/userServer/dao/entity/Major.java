@@ -26,14 +26,7 @@ public class Major implements Serializable {
     @TableId(value = "id", type = IdType.UUID)
     private String id;
     /**
-     * 学校id
-     */
-    private String sId;
-
-    /**
      * 专业名
      */
     private String name;
-
-
 }

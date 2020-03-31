@@ -20,7 +20,6 @@ import lombok.experimental.Accessors;
 @EqualsAndHashCode(callSuper = false)
 @Accessors(chain = true)
 public class School implements Serializable {
-
     private static final long serialVersionUID = 1L;
 
     @TableId(value = "id", type = IdType.UUID)
@@ -29,6 +28,4 @@ public class School implements Serializable {
      * 学校名
      */
     private String name;
-
-
 }

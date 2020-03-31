@@ -3,6 +3,7 @@ package com.cscp.userServer.service.impl;
 import com.baomidou.mybatisplus.core.conditions.query.QueryWrapper;
 import com.baomidou.mybatisplus.core.conditions.update.UpdateWrapper;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
+import com.cscp.common.security.UserInfoUtil;
 import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.*;
 import com.cscp.userServer.dao.mapper.RoleMapper;
@@ -10,11 +11,9 @@ import com.cscp.userServer.dao.mapper.UserMapper;
 import com.cscp.userServer.service.*;
 import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
-import org.apache.commons.lang.ObjectUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.BeanUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -71,8 +70,8 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
      */
     @Override
     public UserVo current() {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user = getOne(new QueryWrapper<User>().eq("username", authentication.getName()));
+        String uid = UserInfoUtil.getUID();
+        User user = getOne(new QueryWrapper<User>().eq("id", uid));
         if (user == null) {
             return null;
         }
@@ -126,21 +125,21 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
                     }
                 }
             }
-            if(user.getGId()!=null){
+            if (user.getGId() != null) {
                 for (Grade grade : grades) {
                     if (user.getGId().equals(grade.getId())) {
                         userVo.setGrade(grade.getName());
                     }
                 }
             }
-            if(user.getMId()!=null){
+            if (user.getMId() != null) {
                 for (Major major : majors) {
                     if (user.getMId().equals(major.getId())) {
                         userVo.setMajor(major.getName());
                     }
                 }
             }
-            if(user.getTId()!=null){
+            if (user.getTId() != null) {
                 for (UserType userType : userTypes) {
                     if (user.getTId().equals(userType.getId())) {
                         userVo.setType(userType.getName());
@@ -206,5 +205,26 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         updateWrapper.set("status", Constant.TABLE_DELETE_CODE);
         updateWrapper.in("id", ids);
         this.update(updateWrapper);
+    }
+
+
+    /***
+     * @discription 修改密码
+     * @param: [oldPassword, newPassword]
+     * @return: void
+     * @author: ckz
+     * @date: 2020/3/29
+     */
+    @Override
+    public void modifyPassword(String oldPassword, String newPassword) {
+        if (StringUtils.isEmpty(oldPassword) || StringUtils.isEmpty(newPassword)) {
+            throw new ViewException("oldPassword or new Password shouldn't be null");
+        }
+        User user = getOne(new QueryWrapper<User>().eq("id", UserInfoUtil.getUID()));
+        if (!user.getPassword().equals(passwordEncoder.encode(oldPassword))) {
+            throw new ViewException("oldPassword isn't correct");
+        }
+        user.setPassword(passwordEncoder.encode(newPassword));
+        updateById(user);
     }
 }
