@@ -77,4 +77,18 @@ public class UserController {
     public Result roles(@PathVariable("userId") String userId) {
         return ResultUtil.success(iRoleService.getRolesByUserId(userId));
     }
+
+    @ApiOperation("修改密码")
+    @PutMapping("/modifyPassword")
+    public Result modifyPassword(String oldPassword,String newPassword){
+        iUserService.modifyPassword(oldPassword,newPassword);
+        return ResultUtil.success();
+    }
+
+    @ApiOperation("注册账号")
+    @PostMapping("/registry")
+    public Result registry(@RequestBody UserDto userDto) {
+        iUserService.post(userDto);
+        return ResultUtil.success();
+    }
 }

@@ -45,6 +45,11 @@ public class User extends Model<User> implements Serializable {
      */
     private String gId;
 
+
+    /**
+     * 用户类型id
+     */
+    private String tId;
     /**
      * 姓名
      */

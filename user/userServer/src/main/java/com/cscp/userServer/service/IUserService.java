@@ -27,4 +27,6 @@ public interface IUserService extends IService<User> {
     void put(UserDto userDto);
 
     void delete(List<String> ids);
+
+    void modifyPassword(String oldPassword, String newPassword);
 }
