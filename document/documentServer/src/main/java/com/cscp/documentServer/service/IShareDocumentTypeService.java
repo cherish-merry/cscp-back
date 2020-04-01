@@ -1,5 +1,7 @@
 package com.cscp.documentServer.service;
 
+import com.cscp.common.utils.GridRequest;
+import com.cscp.common.utils.GridResponse;
 import com.cscp.documentServer.dao.entity.ShareDocumentType;
 import com.baomidou.mybatisplus.extension.service.IService;
 
@@ -13,4 +15,5 @@ import com.baomidou.mybatisplus.extension.service.IService;
  */
 public interface IShareDocumentTypeService extends IService<ShareDocumentType> {
 
+    GridResponse<ShareDocumentType> get(GridRequest gridRequest);
 }
