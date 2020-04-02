@@ -17,7 +17,7 @@ import java.util.List;
  * @since 2020-01-07
  */
 public interface ShareDocumentMapper extends BaseMapper<ShareDocument> {
-    @Select("<script>select doc.*,d_type.name type,user.name u_name,file.origin_name f_name,file.upload_time " +
+    @Select("<script>select doc.*,d_type.name type,user.name user_name,file.origin_name f_name,file.upload_time " +
             "from share_document doc " +
             "left join share_document_type d_type on doc.t_id=d_type.id " +
             "left join user on user.id=doc.u_id " +
