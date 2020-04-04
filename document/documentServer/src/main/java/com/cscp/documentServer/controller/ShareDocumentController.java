@@ -65,6 +65,7 @@ public class ShareDocumentController {
         document.setFId(fId);
         document.setDocumentCount(0L);
         document.setStatus(DOCUMENT_CHECK_STATUS);
+        document.setFName(file.getOriginalFilename());
         documentService.save(document);
         return ResultUtil.success("上传成功");
     }
@@ -149,8 +150,8 @@ public class ShareDocumentController {
 
     @ApiOperation("获取可下载文件列表")
     @PostMapping("/getDownloadFiles")
-    public Result getDownloadFiles(GridRequest gridRequest) {
-        Map map = new HashMap();
+    public Result getDownloadFiles(@RequestBody GridRequest gridRequest) {
+        Map map = (gridRequest.getFilterParams()==null||gridRequest.getFilterParams().size()==0)?new HashMap():gridRequest.getFilterParams();
         map.put("status", DOCUMENT_NORMAL_STATUS);
         gridRequest.setFilterParams(map);
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
@@ -158,16 +159,16 @@ public class ShareDocumentController {
 
     @ApiOperation("获取需审核文件列表")
     @PostMapping("/getCheckedFiles")
-    public Result getCheckedFiles(GridRequest gridRequest) {
-        Map map = new HashMap();
+    public Result getCheckedFiles(@RequestBody GridRequest gridRequest) {
+        Map map = (gridRequest.getFilterParams()==null||gridRequest.getFilterParams().size()==0)?new HashMap():gridRequest.getFilterParams();
         map.put("status", DOCUMENT_CHECK_STATUS);
         gridRequest.setFilterParams(map);
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
     @ApiOperation("获取自己上传的文件列表")
     @PostMapping("/getMyFiles")
-    public Result getMyFiles(GridRequest gridRequest) {
-        Map map = new HashMap();
+    public Result getMyFiles(@RequestBody GridRequest gridRequest) {
+        Map map = (gridRequest.getFilterParams()==null||gridRequest.getFilterParams().size()==0)?new HashMap():gridRequest.getFilterParams();
         map.put("status", DOCUMENT_CHECK_STATUS);
         map.put("u_id",UserInfoUtil.getUID());
         gridRequest.setFilterParams(map);

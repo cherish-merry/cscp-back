@@ -1,13 +1,17 @@
 //package com.cscp.documentServer.service.impl;
 //
-//import com.cscp.documentServer.dao.entity.Document;
-//import com.cscp.documentServer.service.DocumentService;
+//import com.cscp.documentServer.dao.entity.ShareDocument;
+//import com.cscp.documentServer.dao.entity.UploadFile;
+//import com.cscp.documentServer.service.IShareDocumentService;
+//import com.cscp.documentServer.service.IUploadFileService;
 //import net.minidev.json.JSONUtil;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
 //import org.springframework.beans.factory.annotation.Autowired;
 //import org.springframework.boot.test.context.SpringBootTest;
 //import org.springframework.test.context.junit4.SpringRunner;
+//
+//import java.util.List;
 //
 //import static org.junit.Assert.*;
 //
@@ -21,10 +25,21 @@
 //public class DocumentServiceImplTest {
 //
 //    @Autowired
-//    DocumentService documentService;
+//    IUploadFileService uploadFileService;
+//    @Autowired
+//    IShareDocumentService shareDocumentService;
 //
 //    @Test
 //    public void getAllDocuments() {
-//        assertTrue(documentService.getAllDocuments().size()>0);
+//        List<ShareDocument> list = shareDocumentService.list();
+//        for (ShareDocument d :
+//                list) {
+//            UploadFile file = uploadFileService.getById(d.getFId());
+//            if (file!=null){
+//
+//                d.setFName(file.getOriginName());
+//                shareDocumentService.updateById(d);
+//            }
+//        }
 //    }
 //}
