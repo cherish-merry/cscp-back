@@ -1,0 +1,38 @@
+version: '3'
+services:
+#  eureka:
+#    image: eureka
+#    container_name: eureka
+#    restart: always
+#    ports:
+#      - '8761:8761'
+#  config:
+#    image: config
+#    container_name: config
+#    ports:
+#      - '8200:8200'
+#    restart: always
+#  auth:
+#    image: auth
+#    container_name: auth
+#    ports:
+#      - '8181:8181'
+#    restart: always
+  user:
+    image: user
+    container_name: user
+    restart: always
+    ports:
+      - '8100:8100'
+  document:
+    image: document
+    container_name: document
+    ports:
+      - '8000:8000'
+    restart: always
+  gateway:
+    image: gateway
+    container_name: gateway
+    ports:
+      - '8300:8300'
+    restart: always

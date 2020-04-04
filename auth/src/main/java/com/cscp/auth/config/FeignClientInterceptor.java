@@ -22,7 +22,7 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.HashMap;
 
-@Component
+//@Component
 public class FeignClientInterceptor implements RequestInterceptor {
     @Autowired
     AuthorizationServerTokenServices authorizationServerTokenServices;
