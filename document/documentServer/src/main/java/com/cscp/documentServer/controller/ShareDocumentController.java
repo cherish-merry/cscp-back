@@ -164,6 +164,15 @@ public class ShareDocumentController {
         gridRequest.setFilterParams(map);
         return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
     }
+    @ApiOperation("获取自己上传的文件列表")
+    @PostMapping("/getMyFiles")
+    public Result getMyFiles(GridRequest gridRequest) {
+        Map map = new HashMap();
+        map.put("status", DOCUMENT_CHECK_STATUS);
+        map.put("u_id",UserInfoUtil.getUID());
+        gridRequest.setFilterParams(map);
+        return ResultUtil.success(documentService.getDocumentVoList(gridRequest));
+    }
 
     @ApiOperation("获取文件类型")
     @GetMapping("/getFileTypes")
