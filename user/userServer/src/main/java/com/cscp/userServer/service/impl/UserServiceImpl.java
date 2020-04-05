@@ -8,6 +8,7 @@ import com.cscp.common.utils.*;
 import com.cscp.userServer.dao.entity.*;
 import com.cscp.userServer.dao.mapper.RoleMapper;
 import com.cscp.userServer.dao.mapper.UserMapper;
+import com.cscp.userServer.dao.mapper.UserRoleMapper;
 import com.cscp.userServer.service.*;
 import com.cscp.userServer.vo.UserVo;
 import dto.UserDto;
@@ -38,11 +39,16 @@ import java.util.stream.Collectors;
  */
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
+    private static final String DEFAULT_ROLE_NAME = "student";
+
     @Resource
     UserMapper userMapper;
 
     @Resource
     RoleMapper roleMapper;
+
+    @Autowired
+    UserRoleMapper userRoleMapper;
 
     @Autowired
     ISchoolService iSchoolService;
@@ -170,9 +176,17 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
         if (!CollectionUtils.isEmpty(list(queryWrapper))) {
             throw new ViewException("用户名已存在");
         }
+
         BeanUtils.copyProperties(userDto, user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         this.save(user);
+        Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_name", DEFAULT_ROLE_NAME));
+        if (role != null) {
+            UserRole userRole = new UserRole();
+            userRole.setUId(user.getId());
+            userRole.setRId(role.getId());
+            userRoleMapper.insert(userRole);
+        }
     }
 
     /***

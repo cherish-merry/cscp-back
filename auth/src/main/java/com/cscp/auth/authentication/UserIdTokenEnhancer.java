@@ -23,13 +23,6 @@ import java.util.Map;
 @Component
 public class UserIdTokenEnhancer implements TokenEnhancer {
     private static final String PUBLIC_KEY = "public-key.txt";
-
-    @Autowired
-    TokenStore tokenStore;
-
-    @Autowired
-    JwtAccessTokenConverter jwtAccessTokenConverter;
-
     @Autowired
     UserClient userClient;
 

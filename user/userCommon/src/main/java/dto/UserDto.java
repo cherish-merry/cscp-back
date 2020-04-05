@@ -32,6 +32,12 @@ public class UserDto implements Serializable {
 
 
     /**
+     * 用户类型id
+     */
+    private String tId;
+
+
+    /**
      * 姓名
      */
     private String name;
