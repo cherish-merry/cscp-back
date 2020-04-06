@@ -18,7 +18,8 @@ public interface LessonClassMapper extends BaseMapper<LessonClass> {
 
     @Select("select lesson_class.* from user_class JOIN lesson_class " +
             "on user_class.c_id=lesson_class.id " +
-            "where user_class.u_id=#{userId}")
+            "where user_class.u_id=#{userId}" +
+            "order by create_time desc)")
     public IPage<LessonClass> getLessonClassByUser(IPage page, @Param("userId") String userId);
 
 }
