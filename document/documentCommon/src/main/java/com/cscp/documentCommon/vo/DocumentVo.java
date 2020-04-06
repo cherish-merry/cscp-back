@@ -31,6 +31,10 @@ public class DocumentVo {
 
     private String fId;
 
+    private String sId;
+
+    private String sName;
+
     private String fName;
 
     private LocalDateTime uploadTime;

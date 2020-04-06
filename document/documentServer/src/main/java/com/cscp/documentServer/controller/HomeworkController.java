@@ -113,7 +113,7 @@ public class HomeworkController {
         BeanUtils.copyProperties(newClassDto, newclass);
         newclass.setId(UUID.randomUUID().toString());
         newclass.setFounderId(UserInfoUtil.getUID());
-        newclass.setFounderName(        UserInfoUtil.getUserName());
+        newclass.setFounderName(UserInfoUtil.getUserName());
         iLessonClassService.save(newclass);
 //        log.info("===>>>"+        UserInfoUtil.getUserName(authentication)+"创建课程："+newclass.getName());
         return ResultUtil.success();

@@ -7,6 +7,7 @@ import com.cscp.common.support.Result;
 import com.cscp.common.support.ResultUtil;
 import com.cscp.common.utils.GridRequest;
 import com.cscp.common.utils.ViewException;
+import com.cscp.documentServer.client.UserClient;
 import com.cscp.documentServer.dao.entity.ShareDocument;
 import com.cscp.documentServer.dao.entity.ShareDocumentType;
 import com.cscp.documentServer.dao.entity.UploadFile;
@@ -16,6 +17,7 @@ import com.cscp.documentServer.service.IUploadFileService;
 import com.cscp.documentServer.support.UploadEntity;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -53,6 +55,9 @@ public class ShareDocumentController {
     @Resource
     IUploadFileService uploadFileService;
 
+    @Autowired
+    UserClient userClient;
+
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
@@ -64,6 +69,7 @@ public class ShareDocumentController {
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
+        document.setSId(userClient.getCurrentUser().getSId());
         document.setStatus(DOCUMENT_CHECK_STATUS);
         document.setFName(file.getOriginalFilename());
         documentService.save(document);
