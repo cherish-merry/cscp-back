@@ -20,6 +20,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.CollectionUtils;
+import org.springframework.web.bind.annotation.PutMapping;
 
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
@@ -40,6 +41,8 @@ import java.util.stream.Collectors;
 @Service
 public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IUserService {
     private static final String DEFAULT_ROLE_NAME = "student";
+
+    private static final long DEFAULT_CREDIT = 10000;
 
     @Resource
     UserMapper userMapper;
@@ -179,6 +182,7 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
 
         BeanUtils.copyProperties(userDto, user);
         user.setPassword(passwordEncoder.encode(user.getPassword()));
+        user.setCredits(DEFAULT_CREDIT);
         this.save(user);
         Role role = roleMapper.selectOne(new QueryWrapper<Role>().eq("role_name", DEFAULT_ROLE_NAME));
         if (role != null) {
@@ -235,10 +239,18 @@ public class UserServiceImpl extends ServiceImpl<UserMapper, User> implements IU
             throw new ViewException("oldPassword or new Password shouldn't be null");
         }
         User user = getOne(new QueryWrapper<User>().eq("id", UserInfoUtil.getUID()));
-        if (!user.getPassword().equals(passwordEncoder.encode(oldPassword))) {
+        if (!passwordEncoder.matches(oldPassword,user.getPassword())) {
             throw new ViewException("oldPassword isn't correct");
         }
         user.setPassword(passwordEncoder.encode(newPassword));
+        updateById(user);
+    }
+
+    @Override
+    public void recharge(long chargeNum) {
+        String uid = UserInfoUtil.getUID();
+        User user = getOne(new QueryWrapper<User>().eq("id", uid));
+        user.setCredits(user.getCredits() + chargeNum);
         updateById(user);
     }
 }

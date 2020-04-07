@@ -1,6 +1,9 @@
 package com.cscp.auth.config;
 
 import com.cscp.auth.properties.SecurityProperties;
+import com.cscp.common.support.Result;
+import com.cscp.common.support.ResultUtil;
+import com.cscp.common.utils.ViewException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -25,22 +28,11 @@ import java.io.IOException;
 @RestController
 @Slf4j
 public class BrowserSecurityController {
-
-    private RequestCache requestCache = new HttpSessionRequestCache();
-
-    private RedirectStrategy redirectStrategy = new DefaultRedirectStrategy();
-
     @Autowired
     private SecurityProperties securityProperties;
 
     @RequestMapping("/authentication/require")
-    @ResponseStatus(code = HttpStatus.UNAUTHORIZED)
-    public void requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        SavedRequest savedRequest = requestCache.getRequest(request, response);
-        if (savedRequest != null) {
-            String targetUrl = savedRequest.getRedirectUrl();
-            log.info("引发跳转的请求是:" + targetUrl);
-            redirectStrategy.sendRedirect(request, response, securityProperties.getBrowser().getLoginPage());
-        }
+    public Result requireAuthentication(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        return ResultUtil.error(500,"invalid username password or other reason  can't ge token");
     }
 }

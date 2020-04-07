@@ -91,4 +91,11 @@ public class UserController {
         iUserService.post(userDto);
         return ResultUtil.success();
     }
+
+    @ApiOperation("充值积分")
+    @PutMapping("/recharge")
+    public Result recharge(long chargeNum) {
+        iUserService.recharge(chargeNum);
+        return ResultUtil.success();
+    }
 }

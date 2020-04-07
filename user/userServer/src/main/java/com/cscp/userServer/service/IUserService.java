@@ -29,4 +29,6 @@ public interface IUserService extends IService<User> {
     void delete(List<String> ids);
 
     void modifyPassword(String oldPassword, String newPassword);
+
+    void recharge(long chargeNum);
 }
