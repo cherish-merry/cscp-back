@@ -59,6 +59,11 @@ public class ShareDocument implements Serializable {
     private String fId;
 
     /**
+     * 上传者所属学校id
+     */
+    private String sId;
+
+    /**
      * 文件名称
      */
     private String fName;

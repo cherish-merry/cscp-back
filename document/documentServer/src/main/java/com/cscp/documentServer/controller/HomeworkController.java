@@ -74,7 +74,7 @@ public class HomeworkController {
     @ApiOperation("获取管理者管理的课程班级")
     @GetMapping("/getManageLessonClasses")
     public Result getManageClasses(Page page) {
-        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", UserInfoUtil.getUID()));
+        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", UserInfoUtil.getUID()).orderByDesc("create_time"));
         GridResponse gridResponse = GridResponse.getResponseByPage(lessonClassIPage);
         return ResultUtil.success(gridResponse);
     }
@@ -113,7 +113,7 @@ public class HomeworkController {
         BeanUtils.copyProperties(newClassDto, newclass);
         newclass.setId(UUID.randomUUID().toString());
         newclass.setFounderId(UserInfoUtil.getUID());
-        newclass.setFounderName(        UserInfoUtil.getUserName());
+        newclass.setFounderName(UserInfoUtil.getUserName());
         iLessonClassService.save(newclass);
 //        log.info("===>>>"+        UserInfoUtil.getUserName(authentication)+"创建课程："+newclass.getName());
         return ResultUtil.success();

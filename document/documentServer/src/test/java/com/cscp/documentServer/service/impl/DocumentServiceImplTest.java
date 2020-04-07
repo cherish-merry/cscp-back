@@ -1,9 +1,11 @@
 //package com.cscp.documentServer.service.impl;
 //
+//import com.cscp.documentServer.client.UserClient;
 //import com.cscp.documentServer.dao.entity.ShareDocument;
 //import com.cscp.documentServer.dao.entity.UploadFile;
 //import com.cscp.documentServer.service.IShareDocumentService;
 //import com.cscp.documentServer.service.IUploadFileService;
+//import dto.UserDto;
 //import net.minidev.json.JSONUtil;
 //import org.junit.Test;
 //import org.junit.runner.RunWith;
@@ -25,21 +27,21 @@
 //public class DocumentServiceImplTest {
 //
 //    @Autowired
-//    IUploadFileService uploadFileService;
+//    UserClient userClient;
+//    ;
 //    @Autowired
 //    IShareDocumentService shareDocumentService;
 //
 //    @Test
 //    public void getAllDocuments() {
 //        List<ShareDocument> list = shareDocumentService.list();
+//        System.out.println("----------->>>>>>>>>>>>>执行");
 //        for (ShareDocument d :
 //                list) {
-//            UploadFile file = uploadFileService.getById(d.getFId());
-//            if (file!=null){
-//
-//                d.setFName(file.getOriginName());
-//                shareDocumentService.updateById(d);
-//            }
+//            UserDto user = userClient.getUserById(d.getUId());
+//            d.setSId(user.getSId());
+//            shareDocumentService.updateById(d);
+//            System.out.println("----------->>>>>>>>>>>>>执行2");
 //        }
 //    }
 //}
