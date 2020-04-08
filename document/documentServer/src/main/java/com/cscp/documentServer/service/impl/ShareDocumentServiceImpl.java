@@ -40,7 +40,7 @@ public class ShareDocumentServiceImpl extends ServiceImpl<ShareDocumentMapper, S
         }
         GridResponse<ShareDocument> gridResponse = documentGridService.getGridResponse(documentMapper, gridRequest);
         List<DocumentVo> documentVoList = documentMapper.getDocumentVoList(gridResponse.getRecords().stream().map(e -> e.getId()).collect(Collectors.toList()));
-        GridResponse response=new GridResponse();
+        GridResponse<DocumentVo> response=new GridResponse();
         response.setRecords(documentVoList);
         response.setTotal(gridResponse.getTotal());
         return response;

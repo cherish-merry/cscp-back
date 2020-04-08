@@ -8,7 +8,7 @@ spring:
         service-id: config
       profile: ${spring.profiles.active}
   profiles:
-    active: dev
+    active: prod
 ---
 eureka:
   client:

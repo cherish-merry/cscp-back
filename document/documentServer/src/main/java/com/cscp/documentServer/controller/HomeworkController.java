@@ -15,6 +15,7 @@ import com.cscp.documentServer.dao.mapper.TaskMapper;
 import com.cscp.documentServer.service.*;
 import com.cscp.documentServer.support.UploadEntity;
 import io.swagger.annotations.ApiOperation;
+import net.bytebuddy.implementation.bytecode.Throw;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeanUtils;
@@ -74,7 +75,10 @@ public class HomeworkController {
     @ApiOperation("获取管理者管理的课程班级")
     @GetMapping("/getManageLessonClasses")
     public Result getManageClasses(Page page) {
-        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>().eq("founder_id", UserInfoUtil.getUID()).orderByDesc("create_time"));
+        IPage<LessonClass> lessonClassIPage = iLessonClassService.page(Page.getIPage(page), new QueryWrapper<LessonClass>()
+                .eq("founder_id", UserInfoUtil.getUID())
+                .eq("status",TABLE_NORMAL_CODE)
+                .orderByDesc("create_time"));
         GridResponse gridResponse = GridResponse.getResponseByPage(lessonClassIPage);
         return ResultUtil.success(gridResponse);
     }
@@ -84,6 +88,9 @@ public class HomeworkController {
     @PostMapping("/getAllClasses")
     public Result getAllClasses(@RequestBody GridRequest gridRequest) {
         GridService<LessonClass> gridService = new GridService<>();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("status",TABLE_NORMAL_CODE);
+        gridRequest.setFilterParams(map);
         GridResponse<LessonClass> gridResponse = gridService.getGridResponse(lessonClassMapper, gridRequest);
         return ResultUtil.success(gridResponse);
     }
@@ -92,6 +99,10 @@ public class HomeworkController {
     @GetMapping("/getLessonClassByCode")
     public Result getLessonClassByCode(@RequestParam String id) {
         LessonClass lessonClass = iLessonClassService.getById(id);
+        if (lessonClass!=null){
+            if (lessonClass.getStatus().equals(0))
+                throw new ViewException("该课程不存在或已被删除");
+        }
         return ResultUtil.success(lessonClass);
     }
 
@@ -102,6 +113,9 @@ public class HomeworkController {
         UserClass userClass = new UserClass();
         userClass.setCId(cid);
         userClass.setUId(UserInfoUtil.getUID());
+        if (userClassService.count(new QueryWrapper<UserClass>().eq("c_id", cid).eq("u_id",UserInfoUtil.getUID()))!=0){
+            throw new ViewException("您已加入该课程，不可重复加入");
+        }
         userClassService.save(userClass);
         return ResultUtil.success();
     }
@@ -116,6 +130,15 @@ public class HomeworkController {
         newclass.setFounderName(UserInfoUtil.getUserName());
         iLessonClassService.save(newclass);
 //        log.info("===>>>"+        UserInfoUtil.getUserName(authentication)+"创建课程："+newclass.getName());
+        return ResultUtil.success();
+    }
+
+    @ApiOperation("删除课程班级")
+    @GetMapping("/deleteClass")
+    public Result deleteClass(@RequestParam String c_id) {
+        LessonClass lessonClass = iLessonClassService.getById(c_id);
+        lessonClass.setStatus(TABLE_DELETE_CODE);
+        iLessonClassService.updateById(lessonClass);
         return ResultUtil.success();
     }
 
@@ -134,7 +157,7 @@ public class HomeworkController {
     @GetMapping("/submited")
     public Result submited(@RequestParam String tId) {
         boolean submited;
-        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId).eq("author", UserInfoUtil.getUID()));
+        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId).eq("author", UserInfoUtil.getUserName()));
         if (count != 0)
             submited = true;
         else
@@ -145,7 +168,7 @@ public class HomeworkController {
     @ApiOperation("获取任务已提交人数")
     @GetMapping("/getSubmitedCount")
     public Result getSubmitedCount(@RequestParam String tId) {
-        int count = homeworkService.count(new QueryWrapper<Homework>().eq("id", tId));
+        int count = homeworkService.count(new QueryWrapper<Homework>().eq("t_id", tId));
         return ResultUtil.success(count);
     }
 
@@ -154,6 +177,9 @@ public class HomeworkController {
     @PostMapping("/getTasks")
     public Result getTasks(@RequestBody GridRequest gridRequest) {
         GridService<Task> gridService = new GridService<>();
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("status",TABLE_NORMAL_CODE);
+        gridRequest.setFilterParams(map);
         GridResponse<Task> gridResponse = gridService.getGridResponse(taskMapper, gridRequest);
         return ResultUtil.success(gridResponse);
     }
@@ -170,7 +196,9 @@ public class HomeworkController {
     @ApiOperation("删除任务")
     @GetMapping("/deleteTask")
     public Result deleteTask(@RequestParam String t_id) {
-        taskService.removeById(t_id);
+        Task task = taskService.getById(t_id);
+        task.setStatus(TABLE_DELETE_CODE);
+        taskService.updateById(task);
         return ResultUtil.success();
     }
 
@@ -180,14 +208,14 @@ public class HomeworkController {
     @ApiOperation("上传作业文件")
     @PostMapping("/upload")
     public Result upload(MultipartFile file, String tId) throws IOException {
-        Homework preHomework = homeworkService.getOne(new QueryWrapper<Homework>().eq("id", tId).eq("author",         UserInfoUtil.getUserName()));
+        Homework preHomework = homeworkService.getOne(new QueryWrapper<Homework>().eq("t_id", tId).eq("author",UserInfoUtil.getUserName()));
         if (preHomework != null) {
             UploadFile uploadFile = uploadFileService.getById(preHomework.getFId());
             DocumentUtil.deleteFile(uploadFile.getLocation());
             homeworkService.removeById(preHomework.getId());
             log.info("用户:" +         UserInfoUtil.getUserName() + "==覆盖了上传作业文件：" + preHomework.getName());
         }
-        Task task = taskService.getOne(new QueryWrapper<Task>().eq("t_id", tId));
+        Task task = taskService.getById(tId);
         LessonClass myclass = iLessonClassService.getOne(new QueryWrapper<LessonClass>().eq("id", task.getCId()));
         String fileName = file.getOriginalFilename();
         //判断是否为IE浏览器的文件名，IE浏览器下文件名会带有盘符信息
@@ -199,7 +227,7 @@ public class HomeworkController {
         }
         Homework homework = new Homework();
         homework.setId(UUID.randomUUID().toString());
-        homework.setAuthor(        UserInfoUtil.getUserName());
+        homework.setAuthor(UserInfoUtil.getUserName());
         homework.setTId(tId);
         homework.setName(fileName);
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + HOMEWORK_DIR_NAME + SEPARATOR + myclass.getName() + task.getName(), file));
@@ -214,7 +242,7 @@ public class HomeworkController {
     @Transactional
     public void download(HttpServletResponse response, @PathVariable String t_id) throws IOException {
         Object fileLock = new Object();
-        Task task = taskService.getOne(new QueryWrapper<Task>().eq("t_id", t_id));
+        Task task = taskService.getOne(new QueryWrapper<Task>().eq("id", t_id));
         LessonClass myclass = iLessonClassService.getOne(new QueryWrapper<LessonClass>().eq("id", task.getCId()));
         //获取服务器文件
         List<Homework> homeworkList = homeworkService.list(new QueryWrapper<Homework>().eq("t_id", t_id));
