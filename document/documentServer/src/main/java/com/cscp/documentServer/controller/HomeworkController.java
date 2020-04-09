@@ -177,7 +177,9 @@ public class HomeworkController {
     @PostMapping("/getTasks")
     public Result getTasks(@RequestBody GridRequest gridRequest) {
         GridService<Task> gridService = new GridService<>();
-        HashMap<String, Object> map = new HashMap<>();
+        Map<String, Object> map = gridRequest.getFilterParams();
+        if (gridRequest.getFilterParams()==null||gridRequest.getFilterParams().size()==0)
+            map =new HashMap<>();
         map.put("status",TABLE_NORMAL_CODE);
         gridRequest.setFilterParams(map);
         GridResponse<Task> gridResponse = gridService.getGridResponse(taskMapper, gridRequest);

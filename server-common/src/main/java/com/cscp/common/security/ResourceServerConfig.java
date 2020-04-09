@@ -90,6 +90,6 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
                 registry.antMatchers(key).hasAnyRole(value);
             });
         }
-        registry.anyRequest().authenticated();
+        registry.anyRequest().permitAll();
     }
 }

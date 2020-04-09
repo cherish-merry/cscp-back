@@ -15,9 +15,11 @@ import com.cscp.documentServer.service.IShareDocumentService;
 import com.cscp.documentServer.service.IShareDocumentTypeService;
 import com.cscp.documentServer.service.IUploadFileService;
 import com.cscp.documentServer.support.UploadEntity;
+import dto.UserDto;
 import io.swagger.annotations.ApiOperation;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -61,6 +63,7 @@ public class ShareDocumentController {
 
     @ApiOperation("文件上传")
     @PostMapping("/upload")
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
     public Result upload(MultipartFile file, Long credits, String typeId) {
         ShareDocument document = new ShareDocument();
         document.setCredits(credits);
@@ -69,7 +72,8 @@ public class ShareDocumentController {
         String fId = uploadFileService.uploadFile(new UploadEntity(null, SEPARATOR + "share_files", file));
         document.setFId(fId);
         document.setDocumentCount(0L);
-        document.setSId(userClient.getCurrentUser().getSId());
+        UserDto currentUser = userClient.getUserById(UserInfoUtil.getUID());
+        document.setSId(currentUser.getSId());
         document.setStatus(DOCUMENT_CHECK_STATUS);
         document.setFName(file.getOriginalFilename());
         documentService.save(document);
@@ -99,7 +103,7 @@ public class ShareDocumentController {
 
     @ApiOperation("文件下载")
     @GetMapping("/download/{id}")
-    @Transactional
+    @Transactional(rollbackFor = Exception.class,propagation = Propagation.REQUIRED)
     public void download(HttpServletResponse response, @PathVariable String id, @RequestParam int status) throws IOException, ViewException {
         //获取服务器文件
         ShareDocument document = documentService.getById(id);
